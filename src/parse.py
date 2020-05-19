@@ -19,7 +19,7 @@ def parse(sentence):
 def partitionBConn(sent):
     for conn in bconnectives:
         if ' ' + conn + ' ' in sent:
-            return sent.partition(' ' + conn + ' ')
+            return [x.strip() for x in sent.partition(' ' + conn + ' ')]
     return False
 
-parse(sent)
+parse(sent) # [('Socrates is human', ' implies ', 'Socrates is mortal'), 'Socrates is human', 'Socrates is mortal']

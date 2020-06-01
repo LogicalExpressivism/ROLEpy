@@ -49,6 +49,7 @@ def formulas(input):
         formulas = [s.parseFormulasTokenDict() for s in sentences]
         for i, f in enumerate(formulas):
             print('[{}]----------'.format(i + 1))
+            print(sentences[i])
             # printTree(sentences[i].sentence.binarizedParseTree)
             f.prettyPrint(1)
 

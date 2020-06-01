@@ -85,6 +85,12 @@ class Sentence:
     def __init__(self, sentence):
         self.sentence = sentence
 
+    def __str__(self):
+        string = ''
+        for token in self.sentence.token:
+            string += token.originalText + ' '
+        return string
+
     def binarizedParseTreeTokenDict(self):
         tokens = self.sentence.token
         bpt = self.sentence.binarizedParseTree
@@ -155,50 +161,8 @@ class Sentence:
                     elif hasInnerSbar(ats):
                         # Split at inner SBARS.
                         sbar, rest = splitInnerSbar(pt)
-                        pprint(rest)
                         inidx = firstidx(sbar['child'], 'IN')
                         return Formula(pt, sbar['child'][inidx]['child'][0]['value'], parse(sbar['child'][1 - inidx]), parse(rest))
                 # other pair
                 return Formula(pt, None, None, None)
         return parse(self.binarizedParseTreeTokenDict())
-    
-    def parseFormulas(self):
-        def hasInnerSbar(pt):
-            if pt.value == 'SBAR':
-                return True
-            return any([hasInnerSbar(c) for c in pt.child])
-
-        def firstidx(iter, val):
-            for i, x in enumerate(iter):
-                if x.value == val:
-                    return i
-            return None
-
-        def parse(pt):
-            if pt.value == 'ROOT':
-                return parse(pt.child[0])
-            if pt.value in ['S', '@S']:
-                # Maybe @S/Punct pair
-                for i, x in enumerate(pt.child):
-                    if x.value in ['.', ',']:
-                        return parse(pt.child[1 - i])
-                # Maybe has @S
-                atsidx = firstidx(pt.child, '@S')
-                if atsidx != None:
-                    ats = pt.child[atsidx]
-                    other = pt.child[1 - atsidx]
-                    if other.value == 'S':
-                        # S/@S pair
-                        ccidx = firstidx(ats.child, 'CC')
-                        if ccidx != None:
-                            return Formula(pt, ats.child[ccidx].child[0].value, parse(ats.child[1 - ccidx]), parse(other))
-                    elif other.value == 'SBAR':
-                        # SBAR/@S pair
-                        inidx = firstidx(other.child, 'IN')
-                        assert(inidx != None)
-                        return Formula(pt, other.child[inidx].child[0].value, parse(other.child[1 - inidx]), parse(ats))
-                    # elif hasInnerSbar(ats):
-                        # TODO: Split at inner SBARS.
-                # other pair
-                return Formula(pt, None, None, None)
-        return parse(self.sentence.binarizedParseTree)

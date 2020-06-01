@@ -85,8 +85,8 @@ class Sentence:
         def firstidx(iter, val):
             for i, x in enumerate(iter):
                 if x.value == val:
-                    return True
-
+                    return i
+            return None
         def parse(pt):
             if pt.value == 'ROOT':
                 return parse(pt.child[0])
@@ -106,7 +106,6 @@ class Sentence:
                         if ccidx != None:
                             return Formula(pt, ats.child[ccidx].child[0].value, parse(ats.child[1 - ccidx]), parse(other))
                     elif other.value == 'SBAR':
-                        # SBAR/@S pair
                         inidx = firstidx(other.child, 'IN')
                         assert(inidx != None)
                         return Formula(pt, other.child[inidx].child[0].value, parse(other.child[1 - inidx]), parse(ats))
@@ -116,16 +115,16 @@ class Sentence:
                 return Formula(pt, None, None, None)
         return parse(self.sentence.binarizedParseTree)
 
-document = open("test/socrates.txt", "r")
+# document = open("test/socrates.txt", "r")
 
-with CoreNLPClient(annotators=['tokenize','ssplit','pos','lemma','ner', 'parse', 'depparse', 'coref'], memory='4G', endpoint='http://localhost:9001') as client:
-    text = document.read()
-    doc = client.annotate(text)
+# with CoreNLPClient(annotators=['tokenize','ssplit','pos','lemma','ner', 'parse', 'depparse', 'coref'], memory='4G', endpoint='http://localhost:9001') as client:
+#     text = document.read()
+#     doc = client.annotate(text)
 
-    for sent in doc.sentence:
-        print("--------------------------")
-        print(to_text(sent))
-        s = Sentence(sent)
-        printTree(s.sentence.binarizedParseTree)
-        f = s.parseFormulas()
-        f.prettyPrint()
+#     for sent in doc.sentence:
+#         print("--------------------------")
+#         print(to_text(sent))
+#         s = Sentence(sent)
+#         printTree(s.sentence.binarizedParseTree)
+#         f = s.parseFormulas()
+#         f.prettyPrint()

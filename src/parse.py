@@ -102,9 +102,26 @@ class Sentence:
     
     def parseFormulasTokenDict(self):
         def hasInnerSbar(pt):
+            if pt['value'] == 'S':
+                return False
             if pt['value'] == 'SBAR':
                 return True
             return any([hasInnerSbar(c) for c in pt['child']])
+
+        def splitInnerSbar(pt):
+            sbar = None
+            rest = pt
+            def recurse(t):
+                nonlocal sbar
+                for i, child in enumerate(t['child']):
+                    if child['value'] == 'SBAR':
+                        sbar = t['child'].pop(i)
+                        return True
+                    if hasInnerSbar(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (sbar, rest)
 
         def firstidx(iter, val):
             for i, x in enumerate(iter):
@@ -135,8 +152,12 @@ class Sentence:
                         inidx = firstidx(other['child'], 'IN')
                         assert(inidx != None)
                         return Formula(pt, other['child'][inidx]['child'][0]['value'], parse(other['child'][1 - inidx]), parse(ats))
-                    # elif hasInnerSbar(ats):
-                        # TODO: Split at inner SBARS.
+                    elif hasInnerSbar(ats):
+                        # Split at inner SBARS.
+                        sbar, rest = splitInnerSbar(pt)
+                        pprint(rest)
+                        inidx = firstidx(sbar['child'], 'IN')
+                        return Formula(pt, sbar['child'][inidx]['child'][0]['value'], parse(sbar['child'][1 - inidx]), parse(rest))
                 # other pair
                 return Formula(pt, None, None, None)
         return parse(self.binarizedParseTreeTokenDict())

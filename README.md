@@ -7,10 +7,13 @@
 
 ## Formulas:
 
+Print a list of sentences and their formulas.
+
 ```python3 src/cli.py formulas test/socrates.txt```
 
 Example output:
-```Starting server with command: java -Xmx16G -cp ./corenlp/* edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 30000 -threads 5 -maxCharLength 100000 -quiet True -serverProperties corenlp_server-ddd697ef01d54d8b.props -preload tokenize,ssplit,pos,lemma,ner,parse,depparse,coref
+```
+Starting server with command: java -Xmx16G -cp ./corenlp/* edu.stanford.nlp.pipeline.StanfordCoreNLPServer -port 9000 -timeout 30000 -threads 5 -maxCharLength 100000 -quiet True -serverProperties corenlp_server-fb89f1665bd34819.props -preload tokenize,ssplit,pos,lemma,ner,parse,depparse,coref
 [1]----------
 If Socrates is a human , he is mortal . 
  If
@@ -30,10 +33,12 @@ Socrates is mortal or Socrates is immortal .
 Socrates is a human , and Socrates is not a dancer . 
  and
   Socrates is a human 
-  Socrates is not a dancer 
+  not
+   Socrates is a dancer 
 [5]----------
 Socrates and Plato are not immortal . 
- Socrates and Plato are not immortal . 
+ not
+  Socrates and Plato are immortal . 
 [6]----------
 Therefore , Socrates is mortal . 
  Therefore , Socrates is mortal . 
@@ -47,8 +52,10 @@ If Socrates is a human and a dancer but he is not immortal , then he is not a da
  If
   but
    Socrates is a human and a dancer 
-   he is not immortal 
-  then he is not a dancer and is mortal . 
+   not
+    he is immortal 
+  not
+   then he is a dancer and is mortal . 
 [9]----------
 Should Socrates become a dancer , he will be immortal . 
  Should Socrates become a dancer , he will be immortal . 
@@ -72,10 +79,26 @@ Socrates is a human and Plato is a dancer and Socrates is not immortal .
   and
    Socrates is a human 
    Plato is a dancer 
-  Socrates is not immortal 
+  not
+   Socrates is immortal 
 [13]----------
 Socrates is not immortal if Plato is tired . 
  if
   Plato is tired 
-  Socrates is not immortal . 
+  not
+   Socrates is immortal . 
+[14]----------
+All dancers are immortal and kind but some philosopher is mortal and mean . 
+ but
+  All dancers are immortal and kind 
+  some philosopher is mortal and mean 
+[15]----------
+Socrates is not as immortal as a dancer would be and he certainly is not nimble , but he could be a dancer if he tried hard enough . 
+ but
+  and
+   not
+    Socrates is as immortal as a dancer would be 
+   not
+    he certainly is nimble 
+  he could be a dancer if he tried hard enough 
 ```

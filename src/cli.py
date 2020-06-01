@@ -53,6 +53,5 @@ def formulas(input):
             # printTree(sentences[i].sentence.binarizedParseTree)
             f.prettyPrint(1)
 
-
 if __name__ == '__main__':
     cli()

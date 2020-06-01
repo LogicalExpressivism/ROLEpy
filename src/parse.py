@@ -80,7 +80,7 @@ class Formula:
             if self.right != None:
                 self.right.prettyPrint(indent + 1)
 
-# Sentence is the CoreNLP Sentence
+# Sentence is the CoreNLP Sentence.
 class Sentence:
     def __init__(self, sentence):
         self.sentence = sentence
@@ -91,6 +91,9 @@ class Sentence:
             string += token.originalText + ' '
         return string
 
+    # Get a binarizedParseTree
+    # Insert tokens into the parse tree.
+    # Returns a recursive Dict structure.
     def binarizedParseTreeTokenDict(self):
         tokens = self.sentence.token
         bpt = self.sentence.binarizedParseTree
@@ -106,6 +109,8 @@ class Sentence:
             return {'value': t.value, 'child': children}
         return rewriteNode(bpt)
     
+    # Parse the binarizedParseTreeTokenDict
+    # This would be better if we can use tregex from corenlp, but it does not work for me.
     def parseFormulasTokenDict(self):
         def hasInnerSbar(pt):
             if pt['value'] == 'S':
@@ -187,7 +192,7 @@ class Sentence:
                 # should split propositions over subjects and VPs
                 if hasInnerNot(pt):
                     # Split at inner RB 'not'
-                    # Counts split VPs as whole phrases currently.
+                    # Counts split VPs as whole phrases currently
                     rb, rest = splitInnerNot(pt)
                     return Formula(pt, rb['child'][0]['value'], parse(rest), None)
                 return Formula(pt, None, None, None)

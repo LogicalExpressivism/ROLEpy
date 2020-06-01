@@ -129,6 +129,26 @@ class Sentence:
             assert recurse(rest)
             return (sbar, rest)
 
+        def hasInnerNot(pt):
+            if pt['value'] == 'RB' and pt['child'][0]['value'] == 'not':
+                return True
+            return any([hasInnerNot(c) for c in pt['child']])
+
+        def splitInnerNot(pt):
+            rb = None
+            rest = pt
+            def recurse(t):
+                nonlocal rb
+                for i, child in enumerate(t['child']):
+                    if child['value'] == 'RB' and child['child'][0]['value'] == 'not':
+                        rb = t['child'].pop(i)
+                        return True
+                    if hasInnerNot(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (rb, rest)
+
         def firstidx(iter, val):
             for i, x in enumerate(iter):
                 if x['value'] == val:
@@ -164,5 +184,11 @@ class Sentence:
                         inidx = firstidx(sbar['child'], 'IN')
                         return Formula(pt, sbar['child'][inidx]['child'][0]['value'], parse(sbar['child'][1 - inidx]), parse(rest))
                 # other pair
+                # should split propositions over subjects and VPs
+                if hasInnerNot(pt):
+                    # Split at inner RB 'not'
+                    # Counts split VPs as whole phrases currently.
+                    rb, rest = splitInnerNot(pt)
+                    return Formula(pt, rb['child'][0]['value'], parse(rest), None)
                 return Formula(pt, None, None, None)
         return parse(self.binarizedParseTreeTokenDict())

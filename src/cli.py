@@ -46,7 +46,7 @@ def formulas(input):
     with coreParser() as client:
         doc = client.annotate(input.read())
         sentences = [Sentence(s) for s in doc.sentence]
-        formulas = [s.parseFormulas() for s in sentences]
+        formulas = [s.parseFormulasTokenDict() for s in sentences]
         for i, f in enumerate(formulas):
             print('[{}]----------'.format(i + 1))
             # printTree(sentences[i].sentence.binarizedParseTree)

@@ -4,6 +4,7 @@ import stanza
 from pprint import pprint
 from google.protobuf.json_format import MessageToDict
 
+# Download and extract corenlp to ./corenlp to be able to use it.
 os.environ["CORENLP_HOME"] = "./corenlp"
 
 from stanza.server import CoreNLPClient
@@ -32,6 +33,14 @@ def parsetree_to_string(parsetree):
         string += parsetree_to_string(child)
     if len(parsetree.child) == 0:
         string += parsetree.value + ' '
+    return string
+
+def tokendict_to_string(parsetree):
+    string = ''
+    for child in parsetree['child']:
+        string += tokendict_to_string(child)
+    if len(parsetree['child']) == 0:
+        string += parsetree['value'] + ' '
     return string
 
 class SequentInterface:
@@ -63,7 +72,7 @@ class Formula:
     
     def prettyPrint(self, indent=0):
         if self.connective == None:
-            print('{}{}'.format(' ' * indent, parsetree_to_string(self.tree)))
+            print('{}{}'.format(' ' * indent, tokendict_to_string(self.tree)))
         else:
             print('{}{}'.format(' ' * indent, self.connective))
             if self.left != None:
@@ -75,6 +84,62 @@ class Formula:
 class Sentence:
     def __init__(self, sentence):
         self.sentence = sentence
+
+    def binarizedParseTreeTokenDict(self):
+        tokens = self.sentence.token
+        bpt = self.sentence.binarizedParseTree
+        idx = 0
+        def rewriteNode(t):
+            nonlocal idx, tokens
+            children = [rewriteNode(child) for child in t.child]
+            if len(children) == 0:
+                assert len(tokens) > idx
+                token = tokens[idx]
+                idx += 1
+                return {'value': t.value, 'child': children, 'token': token}
+            return {'value': t.value, 'child': children}
+        return rewriteNode(bpt)
+    
+    def parseFormulasTokenDict(self):
+        def hasInnerSbar(pt):
+            if pt['value'] == 'SBAR':
+                return True
+            return any([hasInnerSbar(c) for c in pt['child']])
+
+        def firstidx(iter, val):
+            for i, x in enumerate(iter):
+                if x['value'] == val:
+                    return i
+            return None
+
+        def parse(pt):
+            if pt['value'] == 'ROOT':
+                return parse(pt['child'][0])
+            if pt['value'] in ['S', '@S']:
+                # Maybe @S/Punct pair
+                for i, x in enumerate(pt['child']):
+                    if x['value'] in ['.', ',']:
+                        return parse(pt['child'][1 - i])
+                # Maybe has @S
+                atsidx = firstidx(pt['child'], '@S')
+                if atsidx != None:
+                    ats = pt['child'][atsidx]
+                    other = pt['child'][1 - atsidx]
+                    if other['value'] == 'S':
+                        # S/@S pair
+                        ccidx = firstidx(ats['child'], 'CC')
+                        if ccidx != None:
+                            return Formula(pt, ats['child'][ccidx]['child'][0]['value'], parse(ats['child'][1 - ccidx]), parse(other))
+                    elif other['value'] == 'SBAR':
+                        # SBAR/@S pair
+                        inidx = firstidx(other['child'], 'IN')
+                        assert(inidx != None)
+                        return Formula(pt, other['child'][inidx]['child'][0]['value'], parse(other['child'][1 - inidx]), parse(ats))
+                    # elif hasInnerSbar(ats):
+                        # TODO: Split at inner SBARS.
+                # other pair
+                return Formula(pt, None, None, None)
+        return parse(self.binarizedParseTreeTokenDict())
     
     def parseFormulas(self):
         def hasInnerSbar(pt):
@@ -87,6 +152,7 @@ class Sentence:
                 if x.value == val:
                     return i
             return None
+
         def parse(pt):
             if pt.value == 'ROOT':
                 return parse(pt.child[0])
@@ -106,6 +172,7 @@ class Sentence:
                         if ccidx != None:
                             return Formula(pt, ats.child[ccidx].child[0].value, parse(ats.child[1 - ccidx]), parse(other))
                     elif other.value == 'SBAR':
+                        # SBAR/@S pair
                         inidx = firstidx(other.child, 'IN')
                         assert(inidx != None)
                         return Formula(pt, other.child[inidx].child[0].value, parse(other.child[1 - inidx]), parse(ats))

@@ -114,17 +114,3 @@ class Sentence:
                 # other pair
                 return Formula(pt, None, None, None)
         return parse(self.sentence.binarizedParseTree)
-
-# document = open("test/socrates.txt", "r")
-
-# with CoreNLPClient(annotators=['tokenize','ssplit','pos','lemma','ner', 'parse', 'depparse', 'coref'], memory='4G', endpoint='http://localhost:9001') as client:
-#     text = document.read()
-#     doc = client.annotate(text)
-
-#     for sent in doc.sentence:
-#         print("--------------------------")
-#         print(to_text(sent))
-#         s = Sentence(sent)
-#         printTree(s.sentence.binarizedParseTree)
-#         f = s.parseFormulas()
-#         f.prettyPrint()

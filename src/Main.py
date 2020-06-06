@@ -373,13 +373,13 @@ class Sequent: #AKA the Trees
       print (self.consequent)
       print (self.atomcheck())
 
-   def money(self): #Currently does not recur as normal. We want this to make a sort of nested tree, but it doesn't seem like that's what's happening. Maybe newloc is getting reused in the wrong way?
+   def money(self): 
+      self.deparen()
       if self.name not in Forest.keys():
          self.parser()
-      self.deparen()
       while self.atomcheck() == False:
          self.parser()
-      for x in range (0, len(self.location)):
+      for x in range (0, len(self.location) - 1):
          backstr = self.location[::-1]
          if backstr[x] == 'L':
             newstr = backstr.replace('L', 'R', 1)
@@ -392,6 +392,7 @@ class Sequent: #AKA the Trees
             self.antecedent = Forest[self.name][newloc]['Antecedents']
             self.consequent = Forest[self.name][newloc]['Consequents']
             self.money()
+
                      
 def debug():
    for x in Forest:

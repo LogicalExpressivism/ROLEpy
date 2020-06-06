@@ -373,25 +373,23 @@ class Sequent: #AKA the Trees
       print (self.consequent)
       print (self.atomcheck())
 
-   def money(self): 
-      self.deparen()
-      if self.name not in Forest.keys():
+   def money(self): #The main function
+      self.deparen() #Cleans up the sequent
+      if self.name not in Forest.keys(): #plants the tree if not planted already
          self.parser()
-      while self.atomcheck() == False:
+      while self.atomcheck() == False: #Decomposes the leftmost connective until there are no connectives to decompose
          self.parser()
-      for x in range (0, len(self.location) - 1):
-         backstr = self.location[::-1]
-         if backstr[x] == 'L':
-            newstr = backstr.replace('L', 'R', 1)
-            newloc = newstr[::-1]
-            if x == 0:
-               pass
-            else:
-               newloc = newloc[:-x]
-            self.location = newloc
-            self.antecedent = Forest[self.name][newloc]['Antecedents']
-            self.consequent = Forest[self.name][newloc]['Consequents']
-            self.money()
+      for x in range (0, len(self.location) - 1): #Recursive loop makes sure we hit all the rightward branching rules
+         backstr = self.location[::-1] #Reverses the location so we can branch back
+         if backstr[x] == 'L': #Every L location should have an associated R location
+            newstr = backstr.replace('L', 'R', 1) #Changes only the most recent L to R (which is why we reversed the string)
+            newloc = newstr[::-1] #Turns the location back around
+            if x != 0: #If x is 0 (which happens when the most recent rule was a 2-parent rule), this next bit doesn't work
+               newloc = newloc[:-x] #Removes everything after the R in location, since we only want the location up to the R
+            self.location = newloc #edits the sequent so we can run our functions
+            self.antecedent = Forest[self.name][newloc]['Antecedents'] #Gets the values from the relevant place in the tree
+            self.consequent = Forest[self.name][newloc]['Consequents'] #Gets the values from the relevant place in the tree
+            self.money() #Clears the tree starting from here.
 
                      
 def debug():

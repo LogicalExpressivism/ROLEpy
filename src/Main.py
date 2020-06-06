@@ -1,4 +1,4 @@
-## I have finally gotten most of this to work as intended the first time we run the parser
+## I have finally gotten most of this to work as intended
 ## Sequent.planter() takes a sequent and makes it an entry in Forest 
 ## Sequent.deparen() removes outermost parentheses for parsing, which allows us to use as many parentheses we want when specifying connectives
 ## Sequent.parser() takes a sequent and finds out where and what the main connective is of the leftmost logically complex sentence and sends that info to router()
@@ -7,15 +7,14 @@
 ## Sequent.gamut() takes a previously specified sequent, plants it, and runs the parser
 ## debug() prints the whole forest in a mostly easy to read way (for now, until the forest gets too big) to check whether everything is as it should be
 ##
-## Currently, the only thing stopping this from working entirely as intended is the fact that running something with more than one logically complex sentence in it through the machinery does not generate
-## the appropriate result. I'm a little stumped on the specifics of how to do this, but maybe we need a check for whether a tree is fully decomposed and while it's not we reapply primer to the left-most
-## branch. The trouble is I don't know where to begin to implement something like that. 
+## money() is the main operator. It takes a sequent, plants it if it isn't already planted, and decomposes it to atoms.
+## 
 #############################################
 
 
 import copy
 
-Connectives = ["and","or","implies","not"]
+Connectives = ["and", "or", "implies", "not"]
 
 Forest = {} #Dictionary containing the Trees
 
@@ -26,23 +25,25 @@ class Sequent: #AKA the Trees
       self.antecedent = antecedent #A list of strings, which are the antecedents
       self.consequent = consequent #A list of strings, which are the consequents
 
-   #def primer(self):  #What I want from this is to ensure, before doing anything that relies on the values of a sequent in the forest, that the values of the whatever.Sequent are
-                        #identical to those from the one in the Forest. I think it'll be necessary in some form or another before we get too far here, but I can't figure it out.
-                        #Update: it is necessary for running any decomposition algorithm on a sequent more than once
-      
-      #loc = copy.deepcopy(list(Forest[self.name])[-1])
-      #ant = copy.deepcopy(list(Forest[self.name][self.location]['Antecedents']))
-      #print (ant)
-  #    self.consequent = Forest[self.name][self.location]['Consequents']
-
    def planter(self): #Takes a sequent from wherever we can get it and plants it as a tree in the forest or updates the tree if it already exists in the forest
                       #Each Tree is a dictionary of locations, which are each dictionaries of antecedents and consequents
       if str(self.name) not in Forest:
          Forest[self.name] = {}
       Forest[self.name][self.location] = {}
-      Forest[self.name][self.location]['Antecedents'] = self.antecedent
-      Forest[self.name][self.location]['Consequents'] = self.consequent
-##      self.primer()
+      Forest[self.name][self.location]['Antecedents'] = copy.deepcopy(self.antecedent)
+      Forest[self.name][self.location]['Consequents'] = copy.deepcopy(self.consequent)
+
+   def atomcheck(self):
+      atomic = True
+      for x in self.antecedent:
+         for y in Connectives:
+            if y in x.split(' '):
+               atomic = False
+      for x in self.consequent:
+         for y in Connectives:
+            if y in x.split(' '):
+               atomic = False
+      return atomic
 
    def deparen(self):                        #For each proposition in the sequent, removes the
       ##outermost parentheses (()).
@@ -122,7 +123,9 @@ class Sequent: #AKA the Trees
       premises.append(behind)
       levelup = Sequent(self.name, location, premises, self.consequent)
       levelup.planter()
-   
+      self.location = location
+      self.antecedent = premises
+        
    def lor(self, position, index):
       lpremises = copy.deepcopy(self.antecedent)
       lconclusions = copy.deepcopy(self.consequent)
@@ -141,6 +144,14 @@ class Sequent: #AKA the Trees
       rlocation = str(self.location + 'R')
       rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions)
       rlevelup.planter()
+      if self.atomcheck() == False:
+         self.location = llocation
+         self.antecedent = lpremises
+         self.consequent = lconclusions
+      elif self.atomcheck() == True:
+         self.location = rlocation
+         self.antecedent = rpremises
+         self.consequent = rconclusions
    
    def lif(self, position, index):
       lpremises = copy.deepcopy(self.antecedent)
@@ -160,6 +171,14 @@ class Sequent: #AKA the Trees
       rlocation = str(self.location + 'R')
       rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions)
       rlevelup.planter()
+      if self.atomcheck() == False:
+         self.location = llocation
+         self.antecedent = lpremises
+         self.consequent = lconclusions
+      elif self.atomcheck() == True:
+         self.location = rlocation
+         self.antecedent = rpremises
+         self.consequent = rconclusions
          
    def lneg(self, position, index):
       location = str(self.location + 'M')
@@ -172,15 +191,18 @@ class Sequent: #AKA the Trees
       conclusions.append(prop)
       levelup = Sequent(self.name, location, premises, conclusions)
       levelup.planter()
+      self.location = location
+      self.consequent = conclusions
+      self.antecedent = premises
          
-   def rand(self, position, index):
+   def rand(self, position, index): #Still requires integration with self.sequent and self.primer()
       lpremises = copy.deepcopy(self.antecedent)
       lconclusions = copy.deepcopy(self.consequent)
       rpremises = copy.deepcopy(self.antecedent)
       rconclusions = copy.deepcopy(self.consequent)
-      mainprop = rpremises[position].split(" ")
-      del lpremises[position]
-      del rpremises[position]
+      mainprop = rconclusions[position].split(" ")
+      del lconclusions[position]
+      del rconclusions[position]
       ahead = " ".join(mainprop[0:index])
       behind = " ".join(mainprop[index + 1:])
       rconclusions.append(behind)
@@ -191,6 +213,14 @@ class Sequent: #AKA the Trees
       rlocation = str(self.location + 'R')
       rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions)
       rlevelup.planter()
+      if self.atomcheck() == False:
+         self.location = llocation
+         self.antecedent = lpremises
+         self.consequent = lconclusions
+      elif self.atomcheck() == True:
+         self.location = rlocation
+         self.antecedent = rpremises
+         self.consequent = rconclusions
          
    def ror(self, position, index):
       location = str(self.location + 'M')
@@ -203,6 +233,8 @@ class Sequent: #AKA the Trees
       conclusions.append(behind)
       levelup = Sequent(self.name, location, self.antecedent, conclusions)
       levelup.planter()
+      self.location = location
+      self.consequent = conclusions
          
    def rif(self, position, index):
       location = str(self.location + 'M')
@@ -216,6 +248,9 @@ class Sequent: #AKA the Trees
       conclusions.append(behind)
       levelup = Sequent(self.name, location, premises, conclusions)
       levelup.planter()
+      self.location = location
+      self.antecedent = premises
+      self.consequent = conclusions
          
    def rneg(self, position, index):
       location = str(self.location + 'M')
@@ -228,6 +263,9 @@ class Sequent: #AKA the Trees
       premises.append(prop)
       levelup = Sequent(self.name, location, premises, conclusions)
       levelup.planter()
+      self.location = location
+      self.consequent = conclusions
+      self.antecedent = premises
          
    def router(self, side, position, connective, index): #sends parser to whichever
       #decomposition function is appropriate, noting which side we're working with,
@@ -255,77 +293,106 @@ class Sequent: #AKA the Trees
    def parser(self):
       ##currently locates (and prints) the main connective of each antecedent of a sequent
       self.deparen()
-     # print ('Name = ' + self.name)
-      seqname = self.name
-     # print ('Ant = ' + str(self.antecedent))
-      premises = self.antecedent
-     # print ('Con = ' + str(self.consequent))
-      conclusions = self.consequent
-      found = False
-      index = []
-      connective = []
-      side = []
-      position = -1
-      if found == False:
-         for propositions in self.antecedent:              #The purpose of this loop is to find the main connective
-            if found == False:
-               position = position + 1
-               words = propositions.split(" ")
-               degree = 0              #number of open parentheses
-               num = -1                #becomes the index of the main connective in words
-               for word in words:
-                  num = num + 1
-                  if word in Connectives:
-                     if degree == 0:
-                        index = num  #locks on to the main connective
-                        connective = word #which connective is it
-                        side = "left" #antecedent or consequent
-                        found = True
-                  else:
-                     letters = list(word)
-                     for letter in letters:   #This loop keeps track of degrees. There should only
-                        ##be one connective at degree 0, and it should be the main
-                        ##connective.
-                        if letter == "(":
-                           degree = degree + 1
-                        elif letter == ")":
-                           degree = degree - 1
-
-      if found == False:
+      if self.atomcheck() == False:
+        # print ('Name = ' + self.name)
+         seqname = self.name
+        # print ('Ant = ' + str(self.antecedent))
+         premises = self.antecedent
+        # print ('Con = ' + str(self.consequent))
+         conclusions = self.consequent
+         found = False
+         index = []
+         connective = []
+         side = []
          position = -1
-         for conclusions in self.consequent:              #The purpose of this loop is to find
-            ##the main connective
-            if found == False:
-               position = position + 1
-               words = conclusions.split(" ")
-               degree = 0              #number of open parentheses
-               num = -1                #becomes the index of the main connective in words
-               for word in words:
-                  num = num + 1
-                  if word in Connectives:
-                     if degree == 0:
-                        index = num  #locks on to the main connective
-                        connective = word
-                        side = "right"
-                        found = True
-                  else:
-                     letters = list(word)
-                     for letter in letters:   #This loop keeps track of degrees. There should only
-                        ##be one connective at degree 0, and it should be the main
-                        ##connective.
-                        if letter == "(":
-                           degree = degree + 1
-                        elif letter == ")":
-                           degree = degree - 1
-      if found == True:
-         self.router(side, position, connective, index)
-      elif found == False:
-         print ("There are no more complex sentences to decompose")
+         if found == False:
+            for propositions in self.antecedent:              #The purpose of this loop is to find the main connective
+               if found == False:
+                  position = position + 1
+                  words = propositions.split(" ")
+                  degree = 0              #number of open parentheses
+                  num = -1                #becomes the index of the main connective in words
+                  for word in words:
+                     num = num + 1
+                     if word in Connectives:
+                        if degree == 0:
+                           index = num  #locks on to the main connective
+                           connective = word #which connective is it
+                           side = "left" #antecedent or consequent
+                           found = True
+                     else:
+                        letters = list(word)
+                        for letter in letters:   #This loop keeps track of degrees. There should only
+                           ##be one connective at degree 0, and it should be the main
+                           ##connective.
+                           if letter == "(":
+                              degree = degree + 1
+                           elif letter == ")":
+                              degree = degree - 1
+         if found == False:
+            position = -1
+            for conclusions in self.consequent:              #The purpose of this loop is to find
+               ##the main connective
+               if found == False:
+                  position = position + 1
+                  words = conclusions.split(" ")
+                  degree = 0              #number of open parentheses
+                  num = -1                #becomes the index of the main connective in words
+                  for word in words:
+                     num = num + 1
+                     if word in Connectives:
+                        if degree == 0:
+                           index = num  #locks on to the main connective
+                           connective = word
+                           side = "right"
+                           found = True
+                     else:
+                        letters = list(word)
+                        for letter in letters:   #This loop keeps track of degrees. There should only
+                           ##be one connective at degree 0, and it should be the main
+                           ##connective.
+                           if letter == "(":
+                              degree = degree + 1
+                           elif letter == ")":
+                              degree = degree - 1
+         if found == True:
+            self.router(side, position, connective, index)
+         elif found == False:
+            for x in range(0, len(self.location)):
+               if list(self.location)[x] == 'L':
+                  print ("There are no more complex sentences to decompose")
+      elif self.atomcheck == True:
+         print ('This sequent is already atomic')
+      self.deparen()
 
-   def gamut(self):
-      self.planter()
-      self.parser()
+   def checker(self):
+      print ('Sequent name, location, antecedent, consequent, atomic')
+      print (self.name)
+      print (self.location)
+      print (self.antecedent)
+      print (self.consequent)
+      print (self.atomcheck())
 
+   def money(self): #Currently does not recur as normal. We want this to make a sort of nested tree, but it doesn't seem like that's what's happening. Maybe newloc is getting reused in the wrong way?
+      if self.name not in Forest.keys():
+         self.parser()
+      self.deparen()
+      while self.atomcheck() == False:
+         self.parser()
+      for x in range (0, len(self.location)):
+         backstr = self.location[::-1]
+         if backstr[x] == 'L':
+            newstr = backstr.replace('L', 'R', 1)
+            newloc = newstr[::-1]
+            if x == 0:
+               pass
+            else:
+               newloc = newloc[:-x]
+            self.location = newloc
+            self.antecedent = Forest[self.name][newloc]['Antecedents']
+            self.consequent = Forest[self.name][newloc]['Consequents']
+            self.money()
+                     
 def debug():
    for x in Forest:
       print ('\'' + x + '\':')
@@ -342,8 +409,9 @@ orseq = Sequent('orseq', 'M', ['(A or B)'], ['(A or B)'])
 impseq = Sequent('impseq', 'M', ['(A implies B)'], ['(A implies B)'])
 noseq = Sequent('noseq', 'M', ['(not (A))'], ['(not (A))'])
 
-testsequents = [killers, andseq, orseq, impseq, noseq]
-for x in testsequents:
-   x.gamut()
+testsuite = [killers, andseq, orseq, impseq, noseq]
+
+for x in testsuite:
+   x.money()
 
 debug()

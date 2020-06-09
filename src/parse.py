@@ -187,10 +187,10 @@ class Sentence:
                     elif other['value'] == 'SBAR':
                         # SBAR/@S pair
                         inidx = firstidx(other['child'], 'IN')
-                        assert(inidx != None)
-                        conn = other['child'][inidx]['child'][0]['value']
-                        if conn.lower() == 'if':
-                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other['child'][1 - inidx]), parse(ats))
+                        if inidx != None:
+                            conn = other['child'][inidx]['child'][0]['value']
+                            if conn.lower() == 'if':
+                                return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other['child'][1 - inidx]), parse(ats))
                     elif hasInnerSbar(ats):
                         # Split at inner SBARS.
                         sbar, rest = splitInnerSbar(pt)

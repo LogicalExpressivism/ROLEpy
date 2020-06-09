@@ -141,7 +141,6 @@ class Sequent:
                     return self.limp(i)
                 if formula.connective == Connective.NOT:
                     return self.lnot(i)
-        print("No antecedents to parse")
         for i, formula in enumerate(self.consequent):
             if not formula.isAtomic():
                 if formula.connective == Connective.AND:
@@ -152,15 +151,14 @@ class Sequent:
                     return self.rimp(i)
                 if formula.connective == Connective.NOT:
                     return self.rnot(i)
-        print("No consequents to parse either!")
 
     def recursiveParse(self):
         if self.isAtomic():
             print("Got atom")
             print(str(self))
             return self
-        print("Got complex sequent")
-        print(str(self))
+        # print("Got complex sequent")
+        # print(str(self))
         return [self, [s.recursiveParse() for s in self.parse()]]
 
 # test = Sequent(

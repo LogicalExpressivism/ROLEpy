@@ -66,7 +66,7 @@ def sequent(input):
         consequent = client.annotate(doc[1])
         consequent = [Sentence(s).parseFormulasTokenDict() for s in consequent.sentence]
         sequent = Sequent(antecedent, consequent)
-        pprint(sequent.recursiveParse())
+        parsed = sequent.recursiveParse()
 
 
 if __name__ == '__main__':

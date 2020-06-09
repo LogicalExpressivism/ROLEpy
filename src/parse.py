@@ -180,7 +180,7 @@ class Sentence:
                         ccidx = firstidx(ats['child'], 'CC')
                         if ccidx != None:
                             conn = ats['child'][ccidx]['child'][0]['value']
-                            if conn == 'and':
+                            if conn in ['and', 'but']:
                                 return Formula(tokendict_to_string(pt), Connective.AND, parse(ats['child'][1 - ccidx]), parse(other))
                             elif conn == 'or':
                                 return Formula(tokendict_to_string(pt), Connective.OR, parse(ats['child'][1 - ccidx]), parse(other))
@@ -189,14 +189,14 @@ class Sentence:
                         inidx = firstidx(other['child'], 'IN')
                         assert(inidx != None)
                         conn = other['child'][inidx]['child'][0]['value']
-                        if conn == 'if':
+                        if conn.lower() == 'if':
                             return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other['child'][1 - inidx]), parse(ats))
                     elif hasInnerSbar(ats):
                         # Split at inner SBARS.
                         sbar, rest = splitInnerSbar(pt)
                         inidx = firstidx(sbar['child'], 'IN')
                         conn = sbar['child'][inidx]['child'][0]['value']
-                        if conn == 'if':
+                        if conn.lower() == 'if':
                             return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(sbar['child'][1 - inidx]), parse(rest))
                 # other pair
                 # should split propositions over subjects and VPs

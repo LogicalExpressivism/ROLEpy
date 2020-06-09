@@ -74,7 +74,17 @@ class Sequent:
         ]
 
     def limp(self, idx):
-        pass
+        antecedent = deepcopy(self.antecedent)
+        f = antecedent.pop(idx)
+        antecedent2 = deepcopy(antecedent)
+        antecedent2.append(f.right)
+        consequent = deepcopy(self.consequent)
+        consequent.append(f.left)
+        consequent2 = deepcopy(self.consequent)
+        return [
+            Sequent(antecedent, consequent),
+            Sequent(antecedent2, consequent2)
+        ]
 
     def lnot(self, idx):
         antecedent = deepcopy(self.antecedent)
@@ -104,7 +114,14 @@ class Sequent:
         return [Sequent(antecedent, consequent)]
 
     def rimp(self, idx):
-        pass
+        antecedent = deepcopy(self.antecedent)
+        f = antecedent.pop(idx)
+        antecedent.append(f.left)
+        consequent = deepcopy(self.consequent)
+        consequent.append(f.right)
+        return [
+            Sequent(antecedent, consequent),
+        ]
 
     def rnot(self, idx):
         antecedent = deepcopy(self.antecedent)
@@ -124,6 +141,7 @@ class Sequent:
                     return self.limp(i)
                 if formula.connective == Connective.NOT:
                     return self.lnot(i)
+        print("No antecedents to parse")
         for i, formula in enumerate(self.consequent):
             if not formula.isAtomic():
                 if formula.connective == Connective.AND:
@@ -134,6 +152,7 @@ class Sequent:
                     return self.rimp(i)
                 if formula.connective == Connective.NOT:
                     return self.rnot(i)
+        print("No consequents to parse either!")
 
     def recursiveParse(self):
         if self.isAtomic():

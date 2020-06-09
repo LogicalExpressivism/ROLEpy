@@ -7,7 +7,8 @@ from stanza.server import CoreNLPClient
 from pprint import pprint
 
 # src/parse.py
-from parse import Formula, Sentence, printTree, tokendict_to_string
+from parse import Sentence, printTree, tokendict_to_string
+from Sequent import Formula, Sequent
 
 @click.group()
 def cli():
@@ -53,6 +54,19 @@ def formulas(input):
             # printTree(sentences[i].sentence.binarizedParseTree)
             # f.prettyPrint(1)
             print(str(f))
+
+@cli.command()
+@click.argument('input', type=click.File('r'))
+def sequent(input):
+    doc = input.read().split("\n\n", 2)
+    assert len(doc) == 2
+    with coreParser() as client:
+        antecedent = client.annotate(doc[0])
+        antecedent = [Sentence(s).parseFormulasTokenDict() for s in antecedent.sentence]
+        consequent = client.annotate(doc[1])
+        consequent = [Sentence(s).parseFormulasTokenDict() for s in consequent.sentence]
+        sequent = Sequent(antecedent, consequent)
+        pprint(sequent.recursiveParse())
 
 
 if __name__ == '__main__':

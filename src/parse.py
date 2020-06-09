@@ -10,6 +10,8 @@ os.environ["CORENLP_HOME"] = "./corenlp"
 from stanza.server import CoreNLPClient
 from stanza.server import to_text
 
+from Sequent import Connective, Formula
+
 # Helper function to print parseTrees more compactly.
 def printTree(tree, indent=0):
     if len(tree.child) == 1 and len(tree.child[0].child) == 0:
@@ -63,22 +65,22 @@ class SequentInterface:
     def parse(self):
         pass
 
-class Formula:
-    def __init__(self, tree, connective=None, left=None, right=None):
-        self.tree = tree
-        self.connective = connective
-        self.left = left
-        self.right = right
+# class Formula:
+#     def __init__(self, tree, connective=None, left=None, right=None):
+#         self.tree = tree
+#         self.connective = connective
+#         self.left = left
+#         self.right = right
     
-    def prettyPrint(self, indent=0):
-        if self.connective == None:
-            print('{}{}'.format(' ' * indent, tokendict_to_string(self.tree)))
-        else:
-            print('{}{}'.format(' ' * indent, self.connective))
-            if self.left != None:
-                self.left.prettyPrint(indent + 1)
-            if self.right != None:
-                self.right.prettyPrint(indent + 1)
+#     def prettyPrint(self, indent=0):
+#         if self.connective == None:
+#             print('{}{}'.format(' ' * indent, tokendict_to_string(self.tree)))
+#         else:
+#             print('{}{}'.format(' ' * indent, self.connective))
+#             if self.left != None:
+#                 self.left.prettyPrint(indent + 1)
+#             if self.right != None:
+#                 self.right.prettyPrint(indent + 1)
 
 # Sentence is the CoreNLP Sentence.
 class Sentence:
@@ -177,23 +179,33 @@ class Sentence:
                         # S/@S pair
                         ccidx = firstidx(ats['child'], 'CC')
                         if ccidx != None:
-                            return Formula(pt, ats['child'][ccidx]['child'][0]['value'], parse(ats['child'][1 - ccidx]), parse(other))
+                            conn = ats['child'][ccidx]['child'][0]['value']
+                            if conn == 'and':
+                                return Formula(tokendict_to_string(pt), Connective.AND, parse(ats['child'][1 - ccidx]), parse(other))
+                            elif conn == 'or':
+                                return Formula(tokendict_to_string(pt), Connective.OR, parse(ats['child'][1 - ccidx]), parse(other))
                     elif other['value'] == 'SBAR':
                         # SBAR/@S pair
                         inidx = firstidx(other['child'], 'IN')
                         assert(inidx != None)
-                        return Formula(pt, other['child'][inidx]['child'][0]['value'], parse(other['child'][1 - inidx]), parse(ats))
+                        conn = other['child'][inidx]['child'][0]['value']
+                        if conn == 'if':
+                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other['child'][1 - inidx]), parse(ats))
                     elif hasInnerSbar(ats):
                         # Split at inner SBARS.
                         sbar, rest = splitInnerSbar(pt)
                         inidx = firstidx(sbar['child'], 'IN')
-                        return Formula(pt, sbar['child'][inidx]['child'][0]['value'], parse(sbar['child'][1 - inidx]), parse(rest))
+                        conn = sbar['child'][inidx]['child'][0]['value']
+                        if conn == 'if':
+                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(sbar['child'][1 - inidx]), parse(rest))
                 # other pair
                 # should split propositions over subjects and VPs
                 if hasInnerNot(pt):
                     # Split at inner RB 'not'
                     # Counts split VPs as whole phrases currently
                     rb, rest = splitInnerNot(pt)
-                    return Formula(pt, rb['child'][0]['value'], parse(rest), None)
-                return Formula(pt, None, None, None)
+                    conn = rb['child'][0]['value']
+                    if conn == 'if':
+                        return Formula(tokendict_to_string(pt), Connective.NOT, parse(rest), None)
+                return Formula(tokendict_to_string(pt), None, None, None)
         return parse(self.binarizedParseTreeTokenDict())

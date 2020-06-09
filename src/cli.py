@@ -7,7 +7,7 @@ from stanza.server import CoreNLPClient
 from pprint import pprint
 
 # src/parse.py
-from parse import Formula, Sentence, printTree
+from parse import Formula, Sentence, printTree, tokendict_to_string
 
 @click.group()
 def cli():
@@ -51,7 +51,9 @@ def formulas(input):
             print('[{}]----------'.format(i + 1))
             print(sentences[i])
             # printTree(sentences[i].sentence.binarizedParseTree)
-            f.prettyPrint(1)
+            # f.prettyPrint(1)
+            print(str(f))
+
 
 if __name__ == '__main__':
     cli()

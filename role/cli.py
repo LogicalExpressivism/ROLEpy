@@ -7,8 +7,8 @@ from stanza.server import CoreNLPClient
 from pprint import pprint
 
 # src/parse.py
-from parse import Sentence, printTree, tokendict_to_string
-from Sequent import Formula, Sequent
+from role.parse import Sentence, printTree, tokendict_to_string
+from role.Sequent import Formula, Sequent
 
 @click.group()
 def cli():

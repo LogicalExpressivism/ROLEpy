@@ -11,8 +11,8 @@
 ## 
 #############################################
 
-
 import copy
+import json
 
 Connectives = ["and", "or", "implies", "not"]
 
@@ -392,14 +392,14 @@ class Sequent: #AKA the Trees
             self.money() #Clears the tree starting from here.
 
                      
-def debug():
-   for x in Forest:
+def debug(the_dict=Forest):
+   for x in the_dict:
       print ('\'' + x + '\':')
-      for y in Forest[x]:
+      for y in the_dict[x]:
          print('   ' + y + ':')
-         for z in Forest[x][y]:
+         for z in the_dict[x][y]:
             print ('      ' + z + ':')
-            for a in Forest[x][y][z]:
+            for a in the_dict[x][y][z]:
                print ('         ' + a)
 
 killers = Sequent('killers', 'M', ['(Socrates is human implies Socrates is mortal)', '((Socrates is human or Socrates is dancer) and (not (Socrates is dancer)))'],['(Socrates is mortal)'])
@@ -413,4 +413,12 @@ testsuite = [killers, andseq, orseq, impseq, noseq]
 for x in testsuite:
    x.money()
 
-debug()
+if __name__ == '__main__':
+   # debug()
+   outfile = open('test.json', 'w+')
+   outfile.write(json.dumps(Forest))
+   outfile.close()
+
+   infile = open('test.json', 'r')
+   the_dict = json.loads(infile.read())
+   debug(the_dict)

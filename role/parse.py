@@ -10,7 +10,7 @@ os.environ["CORENLP_HOME"] = "./corenlp"
 from stanza.server import CoreNLPClient
 from stanza.server import to_text
 
-from Sequent import Connective, Formula
+from role.Sequent import Connective, Formula
 
 # Helper function to print parseTrees more compactly.
 def printTree(tree, indent=0):

@@ -157,13 +157,21 @@ class Sequent:
             print("Got atom")
             print(str(self))
             return self
-        # print("Got complex sequent")
-        # print(str(self))
+        print("Got complex sequent")
+        print(str(self))
         return [self, [s.recursiveParse() for s in self.parse()]]
 
-# test = Sequent(
-#     [Formula('test', Connective.AND, Formula('test2', Connective.OR, Formula('A'), Formula('B')), Formula('C'))],
-#     [Formula('test', Connective.OR, Formula('A'), Formula('test3', Connective.NOT, Formula('D')))]
-# )
+def demo():
+    sequent = Sequent(
+        [
+            Formula("A"),
+            Formula("", Connective.IMPLIES, Formula("", Connective.AND, Formula("A"), Formula("B")), Formula("C"))
+        ],
+        [
+            Formula("C")
+        ]
+    )
+    sequent.recursiveParse()
 
-# pprint(test.recursiveParse())
+if __name__ == '__main__':
+    demo()

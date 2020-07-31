@@ -7,8 +7,13 @@
 ## Sequent.gamut() takes a previously specified sequent, plants it, and runs the parser
 ## debug() prints the whole forest in a mostly easy to read way (for now, until the forest gets too big) to check whether everything is as it should be
 ##
-## money() is the main operator. It takes a sequent, plants it if it isn't already planted, and decomposes it to atoms.
-## 
+## main() is the main operator. It takes a sequent, plants it if it isn't already planted, and decomposes it to atoms.
+##
+## Sequents must be formatted thus: Sequent('SOME_STRING', 'M', ['(FIRST_PREMISE)', '(SECOND_PREMISEa) CONNECTIVE (SECOND_PREMISEb)'], ['(CONCLUSION)'])
+## Each root sequent should begin with a location of 'M' and each sentence should be separated from connectives and each other by parentheses. 
+## For example, my sequent 'killers', a reference to Human by The Killers, is:
+## Sequent('killers', 'M', ['(Socrates is human implies Socrates is mortal)', '((Socrates is human or Socrates is dancer) and (not (Socrates is dancer)))'], ['(Socrates is mortal)'])
+##
 #############################################
 
 
@@ -21,7 +26,7 @@ Forest = {} #Dictionary containing the Trees
 class Sequent: #AKA the Trees
    def __init__(self, name, location, antecedent, consequent):
       self.name = name #the name we want to call the sequent by, just some string for ease of memory; I'm not married to having fancy names, but it certainly makes debugging easier
-      self.location = location #A string of characters that when followed in the right way lead us uniquely to a sequent in the forest. L = Left, R = Right, M = Middle. Roots are always M.
+      self.location = location #A string of characters that when followed in the right way lead us uniquely to a sequent in the forest. L = Left, R = Right, M = Middle. Roots are always M, as are single-parent rule applications.
       self.antecedent = antecedent #A list of strings, which are the antecedents
       self.consequent = consequent #A list of strings, which are the consequents
 
@@ -33,7 +38,7 @@ class Sequent: #AKA the Trees
       Forest[self.name][self.location]['Antecedents'] = copy.deepcopy(self.antecedent)
       Forest[self.name][self.location]['Consequents'] = copy.deepcopy(self.consequent)
 
-   def atomcheck(self):
+   def atomcheck(self): #checks whether a sequent is atomic
       atomic = True
       for x in self.antecedent:
          for y in Connectives:
@@ -47,7 +52,6 @@ class Sequent: #AKA the Trees
 
    def deparen(self):                        #For each proposition in the sequent, removes the
       ##outermost parentheses (()).
-##      self.primer()
       if self.antecedent != [""]:            #It causes problems if we pass an empty set into this
          premises = self.antecedent               #holds onto antecedent
          self.antecedent = []                   #clears antecedent for overwriting
@@ -355,17 +359,17 @@ class Sequent: #AKA the Trees
                               degree = degree + 1
                            elif letter == ")":
                               degree = degree - 1
-         if found == True:
+         if found == True: #If there is a connective, this sends the relevant info to the router.
             self.router(side, position, connective, index)
          elif found == False:
             for x in range(0, len(self.location)):
-               if list(self.location)[x] == 'L':
+               if list(self.location)[x] == 'L': 
                   print ("There are no more complex sentences to decompose")
       elif self.atomcheck == True:
          print ('This sequent is already atomic')
       self.deparen()
 
-   def checker(self):
+   def checker(self): #Shows all the values of a given sequent
       print ('Sequent name, location, antecedent, consequent, atomic')
       print (self.name)
       print (self.location)
@@ -373,27 +377,25 @@ class Sequent: #AKA the Trees
       print (self.consequent)
       print (self.atomcheck())
 
-   def money(self): #Currently does not recur as normal. We want this to make a sort of nested tree, but it doesn't seem like that's what's happening. Maybe newloc is getting reused in the wrong way?
-      if self.name not in Forest.keys():
+   def main(self): #The main function
+      self.deparen() #Cleans up the sequent
+      if self.name not in Forest.keys(): #plants the tree if not planted already
          self.parser()
-      self.deparen()
-      while self.atomcheck() == False:
+      while self.atomcheck() == False: #Decomposes the leftmost connective until there are no connectives to decompose
          self.parser()
-      for x in range (0, len(self.location)):
-         backstr = self.location[::-1]
-         if backstr[x] == 'L':
-            newstr = backstr.replace('L', 'R', 1)
-            newloc = newstr[::-1]
-            if x == 0:
-               pass
-            else:
-               newloc = newloc[:-x]
-            self.location = newloc
-            self.antecedent = Forest[self.name][newloc]['Antecedents']
-            self.consequent = Forest[self.name][newloc]['Consequents']
-            self.money()
+      for x in range (0, len(self.location) - 1): #Recursive loop makes sure we hit all the rightward branching rules
+         backstr = self.location[::-1] #Reverses the location so we can branch back
+         if backstr[x] == 'L': #Every L location should have an associated R location
+            newstr = backstr.replace('L', 'R', 1) #Changes only the most recent L to R (which is why we reversed the string)
+            newloc = newstr[::-1] #Turns the location back around
+            if x != 0: #If x is 0 (which happens when the most recent rule was a 2-parent rule), this next bit doesn't work
+               newloc = newloc[:-x] #Removes everything after the R in location, since we only want the location up to the R
+            self.location = newloc #edits the sequent so we can run our functions
+            self.antecedent = Forest[self.name][newloc]['Antecedents'] #Gets the values from the relevant place in the tree
+            self.consequent = Forest[self.name][newloc]['Consequents'] #Gets the values from the relevant place in the tree
+            self.main() #Clears the tree starting from here.
                      
-def debug():
+def debug():  #Prints the Forest in an easy to parse format. 
    for x in Forest:
       print ('\'' + x + '\':')
       for y in Forest[x]:
@@ -403,15 +405,16 @@ def debug():
             for a in Forest[x][y][z]:
                print ('         ' + a)
 
-killers = Sequent('killers', 'M', ['(Socrates is human implies Socrates is mortal)', '((Socrates is human or Socrates is dancer) and (not (Socrates is dancer)))'],['(Socrates is mortal)'])
+killers = Sequent('killers', 'M', ['(Socrates is human implies Socrates is mortal)', '((Socrates is human or Socrates is dancer) and (not (Socrates is dancer)))'], ['(Socrates is mortal)'])
 andseq = Sequent('andseq', 'M', ['(A and B)'], ['(A and B)'])
 orseq = Sequent('orseq', 'M', ['(A or B)'], ['(A or B)'])
 impseq = Sequent('impseq', 'M', ['(A implies B)'], ['(A implies B)'])
 noseq = Sequent('noseq', 'M', ['(not (A))'], ['(not (A))'])
+complextest = Sequent('complextest', 'M', ['((not (A implies B)) and (C and (not D)))', '((B or (not A)) or ((C and E) implies D))'], ['(not E)'])
 
-testsuite = [killers, andseq, orseq, impseq, noseq]
+testsuite = [killers, andseq, orseq, impseq, noseq, complextest]
 
 for x in testsuite:
-   x.money()
+   x.main()
 
 debug()

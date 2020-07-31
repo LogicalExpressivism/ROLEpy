@@ -1,0 +1,803 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1" />
+<meta name="generator" content="pdoc 0.8.3" />
+<title>role.parse API documentation</title>
+<meta name="description" content="" />
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/sanitize.min.css" integrity="sha256-PK9q560IAAa6WVRRh76LtCaI8pjTJ2z11v0miyNNjrs=" crossorigin>
+<link rel="preload stylesheet" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/10up-sanitize.css/11.0.1/typography.min.css" integrity="sha256-7l/o7C8jubJiy74VsKTidCy1yBkRtiUGbVkYBylBqUg=" crossorigin>
+<link rel="stylesheet preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin>
+<style>:root{--highlight-color:#fe9}.flex{display:flex !important}body{line-height:1.5em}#content{padding:20px}#sidebar{padding:30px;overflow:hidden}#sidebar > *:last-child{margin-bottom:2cm}.http-server-breadcrumbs{font-size:130%;margin:0 0 15px 0}#footer{font-size:.75em;padding:5px 30px;border-top:1px solid #ddd;text-align:right}#footer p{margin:0 0 0 1em;display:inline-block}#footer p:last-child{margin-right:30px}h1,h2,h3,h4,h5{font-weight:300}h1{font-size:2.5em;line-height:1.1em}h2{font-size:1.75em;margin:1em 0 .50em 0}h3{font-size:1.4em;margin:25px 0 10px 0}h4{margin:0;font-size:105%}h1:target,h2:target,h3:target,h4:target,h5:target,h6:target{background:var(--highlight-color);padding:.2em 0}a{color:#058;text-decoration:none;transition:color .3s ease-in-out}a:hover{color:#e82}.title code{font-weight:bold}h2[id^="header-"]{margin-top:2em}.ident{color:#900}pre code{background:#f8f8f8;font-size:.8em;line-height:1.4em}code{background:#f2f2f1;padding:1px 4px;overflow-wrap:break-word}h1 code{background:transparent}pre{background:#f8f8f8;border:0;border-top:1px solid #ccc;border-bottom:1px solid #ccc;margin:1em 0;padding:1ex}#http-server-module-list{display:flex;flex-flow:column}#http-server-module-list div{display:flex}#http-server-module-list dt{min-width:10%}#http-server-module-list p{margin-top:0}.toc ul,#index{list-style-type:none;margin:0;padding:0}#index code{background:transparent}#index h3{border-bottom:1px solid #ddd}#index ul{padding:0}#index h4{margin-top:.6em;font-weight:bold}@media (min-width:200ex){#index .two-column{column-count:2}}@media (min-width:300ex){#index .two-column{column-count:3}}dl{margin-bottom:2em}dl dl:last-child{margin-bottom:4em}dd{margin:0 0 1em 3em}#header-classes + dl > dd{margin-bottom:3em}dd dd{margin-left:2em}dd p{margin:10px 0}.name{background:#eee;font-weight:bold;font-size:.85em;padding:5px 10px;display:inline-block;min-width:40%}.name:hover{background:#e0e0e0}dt:target .name{background:var(--highlight-color)}.name > span:first-child{white-space:nowrap}.name.class > span:nth-child(2){margin-left:.4em}.inherited{color:#999;border-left:5px solid #eee;padding-left:1em}.inheritance em{font-style:normal;font-weight:bold}.desc h2{font-weight:400;font-size:1.25em}.desc h3{font-size:1em}.desc dt code{background:inherit}.source summary,.git-link-div{color:#666;text-align:right;font-weight:400;font-size:.8em;text-transform:uppercase}.source summary > *{white-space:nowrap;cursor:pointer}.git-link{color:inherit;margin-left:1em}.source pre{max-height:500px;overflow:auto;margin:0}.source pre code{font-size:12px;overflow:visible}.hlist{list-style:none}.hlist li{display:inline}.hlist li:after{content:',\2002'}.hlist li:last-child:after{content:none}.hlist .hlist{display:inline;padding-left:1em}img{max-width:100%}td{padding:0 .5em}.admonition{padding:.1em .5em;margin-bottom:1em}.admonition-title{font-weight:bold}.admonition.note,.admonition.info,.admonition.important{background:#aef}.admonition.todo,.admonition.versionadded,.admonition.tip,.admonition.hint{background:#dfd}.admonition.warning,.admonition.versionchanged,.admonition.deprecated{background:#fd4}.admonition.error,.admonition.danger,.admonition.caution{background:lightpink}</style>
+<style media="screen and (min-width: 700px)">@media screen and (min-width:700px){#sidebar{width:30%;height:100vh;overflow:auto;position:sticky;top:0}#content{width:70%;max-width:100ch;padding:3em 4em;border-left:1px solid #ddd}pre code{font-size:1em}.item .name{font-size:1em}main{display:flex;flex-direction:row-reverse;justify-content:flex-end}.toc ul ul,#index ul{padding-left:1.5em}.toc > ul > li{margin-top:.5em}}</style>
+<style media="print">@media print{#sidebar h1{page-break-before:always}.source{display:none}}@media print{*{background:transparent !important;color:#000 !important;box-shadow:none !important;text-shadow:none !important}a[href]:after{content:" (" attr(href) ")";font-size:90%}a[href][title]:after{content:none}abbr[title]:after{content:" (" attr(title) ")"}.ir a:after,a[href^="javascript:"]:after,a[href^="#"]:after{content:""}pre,blockquote{border:1px solid #999;page-break-inside:avoid}thead{display:table-header-group}tr,img{page-break-inside:avoid}img{max-width:100% !important}@page{margin:0.5cm}p,h2,h3{orphans:3;widows:3}h1,h2,h3,h4,h5,h6{page-break-after:avoid}}</style>
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin></script>
+<script>window.addEventListener('DOMContentLoaded', () => hljs.initHighlighting())</script>
+</head>
+<body>
+<main>
+<article id="content">
+<header>
+<h1 class="title">Module <code>role.parse</code></h1>
+</header>
+<section id="section-intro">
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">import copy
+import os
+import stanza
+from pprint import pprint
+from google.protobuf.json_format import MessageToDict
+
+# Download and extract corenlp to ./corenlp to be able to use it.
+os.environ[&#34;CORENLP_HOME&#34;] = &#34;./corenlp&#34;
+
+from stanza.server import CoreNLPClient
+from stanza.server import to_text
+
+from role.Sequent import Connective, Formula
+
+# Helper function to print parseTrees more compactly.
+def printTree(tree, indent=0):
+    if len(tree.child) == 1 and len(tree.child[0].child) == 0:
+        print(&#34;{}{} {}&#34;.format(&#34;  &#34; * indent, tree.value, tree.child[0].value))
+    else:
+        print(&#34;{}{}&#34;.format(&#34;  &#34; * indent, tree.value))
+        for child in tree.child:
+            printTree(child, indent + 1)
+
+def subsentences(parsetree):
+    ss = []
+    for child in parsetree.child:
+        ss.extend(subsentences(child))
+    if parsetree.value == &#39;S&#39;:
+        ss.append(parsetree)
+    return ss
+
+def parsetree_to_string(parsetree):
+    string = &#39;&#39;
+    for child in parsetree.child:
+        string += parsetree_to_string(child)
+    if len(parsetree.child) == 0:
+        string += parsetree.value + &#39; &#39;
+    return string
+
+def tokendict_to_string(parsetree):
+    string = &#39;&#39;
+    for child in parsetree[&#39;child&#39;]:
+        string += tokendict_to_string(child)
+    if len(parsetree[&#39;child&#39;]) == 0:
+        string += parsetree[&#39;value&#39;] + &#39; &#39;
+    return string
+
+class SequentInterface:
+    def land(self):
+        pass
+    def lor(self):
+        pass
+    def lif(self):
+        pass
+    def lneg(self):
+        pass
+    def rand(self):
+        pass
+    def ror(self):
+        pass
+    def rif(self):
+        pass
+    def rneg(self):
+        pass
+    def parse(self):
+        pass
+
+# class Formula:
+#     def __init__(self, tree, connective=None, left=None, right=None):
+#         self.tree = tree
+#         self.connective = connective
+#         self.left = left
+#         self.right = right
+    
+#     def prettyPrint(self, indent=0):
+#         if self.connective == None:
+#             print(&#39;{}{}&#39;.format(&#39; &#39; * indent, tokendict_to_string(self.tree)))
+#         else:
+#             print(&#39;{}{}&#39;.format(&#39; &#39; * indent, self.connective))
+#             if self.left != None:
+#                 self.left.prettyPrint(indent + 1)
+#             if self.right != None:
+#                 self.right.prettyPrint(indent + 1)
+
+# Sentence is the CoreNLP Sentence.
+class Sentence:
+    def __init__(self, sentence):
+        self.sentence = sentence
+
+    def __str__(self):
+        string = &#39;&#39;
+        for token in self.sentence.token:
+            string += token.originalText + &#39; &#39;
+        return string
+
+    # Get a binarizedParseTree
+    # Insert tokens into the parse tree.
+    # Returns a recursive Dict structure.
+    def binarizedParseTreeTokenDict(self):
+        tokens = self.sentence.token
+        bpt = self.sentence.binarizedParseTree
+        idx = 0
+        def rewriteNode(t):
+            nonlocal idx, tokens
+            children = [rewriteNode(child) for child in t.child]
+            if len(children) == 0:
+                assert len(tokens) &gt; idx
+                token = tokens[idx]
+                idx += 1
+                return {&#39;value&#39;: t.value, &#39;child&#39;: children, &#39;token&#39;: token}
+            return {&#39;value&#39;: t.value, &#39;child&#39;: children}
+        return rewriteNode(bpt)
+    
+    # Parse the binarizedParseTreeTokenDict
+    # This would be better if we can use tregex from corenlp, but it does not work for me.
+    def parseFormulasTokenDict(self):
+        def hasInnerSbar(pt):
+            if pt[&#39;value&#39;] == &#39;S&#39;:
+                return False
+            if pt[&#39;value&#39;] == &#39;SBAR&#39;:
+                return True
+            return any([hasInnerSbar(c) for c in pt[&#39;child&#39;]])
+
+        def splitInnerSbar(pt):
+            sbar = None
+            rest = pt
+            def recurse(t):
+                nonlocal sbar
+                for i, child in enumerate(t[&#39;child&#39;]):
+                    if child[&#39;value&#39;] == &#39;SBAR&#39;:
+                        sbar = t[&#39;child&#39;].pop(i)
+                        return True
+                    if hasInnerSbar(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (sbar, rest)
+
+        def hasInnerNot(pt):
+            if pt[&#39;value&#39;] == &#39;RB&#39; and pt[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+                return True
+            return any([hasInnerNot(c) for c in pt[&#39;child&#39;]])
+
+        def splitInnerNot(pt):
+            rb = None
+            rest = pt
+            def recurse(t):
+                nonlocal rb
+                for i, child in enumerate(t[&#39;child&#39;]):
+                    if child[&#39;value&#39;] == &#39;RB&#39; and child[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+                        rb = t[&#39;child&#39;].pop(i)
+                        return True
+                    if hasInnerNot(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (rb, rest)
+
+        def firstidx(iter, val):
+            for i, x in enumerate(iter):
+                if x[&#39;value&#39;] == val:
+                    return i
+            return None
+
+        def parse(pt):
+            if pt[&#39;value&#39;] == &#39;ROOT&#39;:
+                return parse(pt[&#39;child&#39;][0])
+            if pt[&#39;value&#39;] in [&#39;S&#39;, &#39;@S&#39;]:
+                # Maybe @S/Punct pair
+                for i, x in enumerate(pt[&#39;child&#39;]):
+                    if x[&#39;value&#39;] in [&#39;.&#39;, &#39;,&#39;]:
+                        return parse(pt[&#39;child&#39;][1 - i])
+                # Maybe has @S
+                atsidx = firstidx(pt[&#39;child&#39;], &#39;@S&#39;)
+                if atsidx != None:
+                    ats = pt[&#39;child&#39;][atsidx]
+                    other = pt[&#39;child&#39;][1 - atsidx]
+                    if other[&#39;value&#39;] == &#39;S&#39;:
+                        # S/@S pair
+                        ccidx = firstidx(ats[&#39;child&#39;], &#39;CC&#39;)
+                        if ccidx != None:
+                            conn = ats[&#39;child&#39;][ccidx][&#39;child&#39;][0][&#39;value&#39;]
+                            if conn in [&#39;and&#39;, &#39;but&#39;]:
+                                return Formula(tokendict_to_string(pt), Connective.AND, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                            elif conn == &#39;or&#39;:
+                                return Formula(tokendict_to_string(pt), Connective.OR, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                    elif other[&#39;value&#39;] == &#39;SBAR&#39;:
+                        # SBAR/@S pair
+                        inidx = firstidx(other[&#39;child&#39;], &#39;IN&#39;)
+                        if inidx != None:
+                            conn = other[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                            if conn.lower() == &#39;if&#39;:
+                                return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other[&#39;child&#39;][1 - inidx]), parse(ats))
+                    elif hasInnerSbar(ats):
+                        # Split at inner SBARS.
+                        sbar, rest = splitInnerSbar(pt)
+                        inidx = firstidx(sbar[&#39;child&#39;], &#39;IN&#39;)
+                        conn = sbar[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                        if conn.lower() == &#39;if&#39;:
+                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(sbar[&#39;child&#39;][1 - inidx]), parse(rest))
+                # other pair
+                # should split propositions over subjects and VPs
+                if hasInnerNot(pt):
+                    # Split at inner RB &#39;not&#39;
+                    # Counts split VPs as whole phrases currently
+                    rb, rest = splitInnerNot(pt)
+                    conn = rb[&#39;child&#39;][0][&#39;value&#39;]
+                    if conn == &#39;if&#39;:
+                        return Formula(tokendict_to_string(pt), Connective.NOT, parse(rest), None)
+                return Formula(tokendict_to_string(pt), None, None, None)
+        return parse(self.binarizedParseTreeTokenDict())</code></pre>
+</details>
+</section>
+<section>
+</section>
+<section>
+</section>
+<section>
+<h2 class="section-title" id="header-functions">Functions</h2>
+<dl>
+<dt id="role.parse.parsetree_to_string"><code class="name flex">
+<span>def <span class="ident">parsetree_to_string</span></span>(<span>parsetree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parsetree_to_string(parsetree):
+    string = &#39;&#39;
+    for child in parsetree.child:
+        string += parsetree_to_string(child)
+    if len(parsetree.child) == 0:
+        string += parsetree.value + &#39; &#39;
+    return string</code></pre>
+</details>
+</dd>
+<dt id="role.parse.printTree"><code class="name flex">
+<span>def <span class="ident">printTree</span></span>(<span>tree, indent=0)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def printTree(tree, indent=0):
+    if len(tree.child) == 1 and len(tree.child[0].child) == 0:
+        print(&#34;{}{} {}&#34;.format(&#34;  &#34; * indent, tree.value, tree.child[0].value))
+    else:
+        print(&#34;{}{}&#34;.format(&#34;  &#34; * indent, tree.value))
+        for child in tree.child:
+            printTree(child, indent + 1)</code></pre>
+</details>
+</dd>
+<dt id="role.parse.subsentences"><code class="name flex">
+<span>def <span class="ident">subsentences</span></span>(<span>parsetree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def subsentences(parsetree):
+    ss = []
+    for child in parsetree.child:
+        ss.extend(subsentences(child))
+    if parsetree.value == &#39;S&#39;:
+        ss.append(parsetree)
+    return ss</code></pre>
+</details>
+</dd>
+<dt id="role.parse.tokendict_to_string"><code class="name flex">
+<span>def <span class="ident">tokendict_to_string</span></span>(<span>parsetree)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def tokendict_to_string(parsetree):
+    string = &#39;&#39;
+    for child in parsetree[&#39;child&#39;]:
+        string += tokendict_to_string(child)
+    if len(parsetree[&#39;child&#39;]) == 0:
+        string += parsetree[&#39;value&#39;] + &#39; &#39;
+    return string</code></pre>
+</details>
+</dd>
+</dl>
+</section>
+<section>
+<h2 class="section-title" id="header-classes">Classes</h2>
+<dl>
+<dt id="role.parse.Sentence"><code class="flex name class">
+<span>class <span class="ident">Sentence</span></span>
+<span>(</span><span>sentence)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class Sentence:
+    def __init__(self, sentence):
+        self.sentence = sentence
+
+    def __str__(self):
+        string = &#39;&#39;
+        for token in self.sentence.token:
+            string += token.originalText + &#39; &#39;
+        return string
+
+    # Get a binarizedParseTree
+    # Insert tokens into the parse tree.
+    # Returns a recursive Dict structure.
+    def binarizedParseTreeTokenDict(self):
+        tokens = self.sentence.token
+        bpt = self.sentence.binarizedParseTree
+        idx = 0
+        def rewriteNode(t):
+            nonlocal idx, tokens
+            children = [rewriteNode(child) for child in t.child]
+            if len(children) == 0:
+                assert len(tokens) &gt; idx
+                token = tokens[idx]
+                idx += 1
+                return {&#39;value&#39;: t.value, &#39;child&#39;: children, &#39;token&#39;: token}
+            return {&#39;value&#39;: t.value, &#39;child&#39;: children}
+        return rewriteNode(bpt)
+    
+    # Parse the binarizedParseTreeTokenDict
+    # This would be better if we can use tregex from corenlp, but it does not work for me.
+    def parseFormulasTokenDict(self):
+        def hasInnerSbar(pt):
+            if pt[&#39;value&#39;] == &#39;S&#39;:
+                return False
+            if pt[&#39;value&#39;] == &#39;SBAR&#39;:
+                return True
+            return any([hasInnerSbar(c) for c in pt[&#39;child&#39;]])
+
+        def splitInnerSbar(pt):
+            sbar = None
+            rest = pt
+            def recurse(t):
+                nonlocal sbar
+                for i, child in enumerate(t[&#39;child&#39;]):
+                    if child[&#39;value&#39;] == &#39;SBAR&#39;:
+                        sbar = t[&#39;child&#39;].pop(i)
+                        return True
+                    if hasInnerSbar(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (sbar, rest)
+
+        def hasInnerNot(pt):
+            if pt[&#39;value&#39;] == &#39;RB&#39; and pt[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+                return True
+            return any([hasInnerNot(c) for c in pt[&#39;child&#39;]])
+
+        def splitInnerNot(pt):
+            rb = None
+            rest = pt
+            def recurse(t):
+                nonlocal rb
+                for i, child in enumerate(t[&#39;child&#39;]):
+                    if child[&#39;value&#39;] == &#39;RB&#39; and child[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+                        rb = t[&#39;child&#39;].pop(i)
+                        return True
+                    if hasInnerNot(child):
+                        return recurse(child)
+                return False
+            assert recurse(rest)
+            return (rb, rest)
+
+        def firstidx(iter, val):
+            for i, x in enumerate(iter):
+                if x[&#39;value&#39;] == val:
+                    return i
+            return None
+
+        def parse(pt):
+            if pt[&#39;value&#39;] == &#39;ROOT&#39;:
+                return parse(pt[&#39;child&#39;][0])
+            if pt[&#39;value&#39;] in [&#39;S&#39;, &#39;@S&#39;]:
+                # Maybe @S/Punct pair
+                for i, x in enumerate(pt[&#39;child&#39;]):
+                    if x[&#39;value&#39;] in [&#39;.&#39;, &#39;,&#39;]:
+                        return parse(pt[&#39;child&#39;][1 - i])
+                # Maybe has @S
+                atsidx = firstidx(pt[&#39;child&#39;], &#39;@S&#39;)
+                if atsidx != None:
+                    ats = pt[&#39;child&#39;][atsidx]
+                    other = pt[&#39;child&#39;][1 - atsidx]
+                    if other[&#39;value&#39;] == &#39;S&#39;:
+                        # S/@S pair
+                        ccidx = firstidx(ats[&#39;child&#39;], &#39;CC&#39;)
+                        if ccidx != None:
+                            conn = ats[&#39;child&#39;][ccidx][&#39;child&#39;][0][&#39;value&#39;]
+                            if conn in [&#39;and&#39;, &#39;but&#39;]:
+                                return Formula(tokendict_to_string(pt), Connective.AND, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                            elif conn == &#39;or&#39;:
+                                return Formula(tokendict_to_string(pt), Connective.OR, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                    elif other[&#39;value&#39;] == &#39;SBAR&#39;:
+                        # SBAR/@S pair
+                        inidx = firstidx(other[&#39;child&#39;], &#39;IN&#39;)
+                        if inidx != None:
+                            conn = other[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                            if conn.lower() == &#39;if&#39;:
+                                return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other[&#39;child&#39;][1 - inidx]), parse(ats))
+                    elif hasInnerSbar(ats):
+                        # Split at inner SBARS.
+                        sbar, rest = splitInnerSbar(pt)
+                        inidx = firstidx(sbar[&#39;child&#39;], &#39;IN&#39;)
+                        conn = sbar[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                        if conn.lower() == &#39;if&#39;:
+                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(sbar[&#39;child&#39;][1 - inidx]), parse(rest))
+                # other pair
+                # should split propositions over subjects and VPs
+                if hasInnerNot(pt):
+                    # Split at inner RB &#39;not&#39;
+                    # Counts split VPs as whole phrases currently
+                    rb, rest = splitInnerNot(pt)
+                    conn = rb[&#39;child&#39;][0][&#39;value&#39;]
+                    if conn == &#39;if&#39;:
+                        return Formula(tokendict_to_string(pt), Connective.NOT, parse(rest), None)
+                return Formula(tokendict_to_string(pt), None, None, None)
+        return parse(self.binarizedParseTreeTokenDict())</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="role.parse.Sentence.binarizedParseTreeTokenDict"><code class="name flex">
+<span>def <span class="ident">binarizedParseTreeTokenDict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def binarizedParseTreeTokenDict(self):
+    tokens = self.sentence.token
+    bpt = self.sentence.binarizedParseTree
+    idx = 0
+    def rewriteNode(t):
+        nonlocal idx, tokens
+        children = [rewriteNode(child) for child in t.child]
+        if len(children) == 0:
+            assert len(tokens) &gt; idx
+            token = tokens[idx]
+            idx += 1
+            return {&#39;value&#39;: t.value, &#39;child&#39;: children, &#39;token&#39;: token}
+        return {&#39;value&#39;: t.value, &#39;child&#39;: children}
+    return rewriteNode(bpt)</code></pre>
+</details>
+</dd>
+<dt id="role.parse.Sentence.parseFormulasTokenDict"><code class="name flex">
+<span>def <span class="ident">parseFormulasTokenDict</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parseFormulasTokenDict(self):
+    def hasInnerSbar(pt):
+        if pt[&#39;value&#39;] == &#39;S&#39;:
+            return False
+        if pt[&#39;value&#39;] == &#39;SBAR&#39;:
+            return True
+        return any([hasInnerSbar(c) for c in pt[&#39;child&#39;]])
+
+    def splitInnerSbar(pt):
+        sbar = None
+        rest = pt
+        def recurse(t):
+            nonlocal sbar
+            for i, child in enumerate(t[&#39;child&#39;]):
+                if child[&#39;value&#39;] == &#39;SBAR&#39;:
+                    sbar = t[&#39;child&#39;].pop(i)
+                    return True
+                if hasInnerSbar(child):
+                    return recurse(child)
+            return False
+        assert recurse(rest)
+        return (sbar, rest)
+
+    def hasInnerNot(pt):
+        if pt[&#39;value&#39;] == &#39;RB&#39; and pt[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+            return True
+        return any([hasInnerNot(c) for c in pt[&#39;child&#39;]])
+
+    def splitInnerNot(pt):
+        rb = None
+        rest = pt
+        def recurse(t):
+            nonlocal rb
+            for i, child in enumerate(t[&#39;child&#39;]):
+                if child[&#39;value&#39;] == &#39;RB&#39; and child[&#39;child&#39;][0][&#39;value&#39;] == &#39;not&#39;:
+                    rb = t[&#39;child&#39;].pop(i)
+                    return True
+                if hasInnerNot(child):
+                    return recurse(child)
+            return False
+        assert recurse(rest)
+        return (rb, rest)
+
+    def firstidx(iter, val):
+        for i, x in enumerate(iter):
+            if x[&#39;value&#39;] == val:
+                return i
+        return None
+
+    def parse(pt):
+        if pt[&#39;value&#39;] == &#39;ROOT&#39;:
+            return parse(pt[&#39;child&#39;][0])
+        if pt[&#39;value&#39;] in [&#39;S&#39;, &#39;@S&#39;]:
+            # Maybe @S/Punct pair
+            for i, x in enumerate(pt[&#39;child&#39;]):
+                if x[&#39;value&#39;] in [&#39;.&#39;, &#39;,&#39;]:
+                    return parse(pt[&#39;child&#39;][1 - i])
+            # Maybe has @S
+            atsidx = firstidx(pt[&#39;child&#39;], &#39;@S&#39;)
+            if atsidx != None:
+                ats = pt[&#39;child&#39;][atsidx]
+                other = pt[&#39;child&#39;][1 - atsidx]
+                if other[&#39;value&#39;] == &#39;S&#39;:
+                    # S/@S pair
+                    ccidx = firstidx(ats[&#39;child&#39;], &#39;CC&#39;)
+                    if ccidx != None:
+                        conn = ats[&#39;child&#39;][ccidx][&#39;child&#39;][0][&#39;value&#39;]
+                        if conn in [&#39;and&#39;, &#39;but&#39;]:
+                            return Formula(tokendict_to_string(pt), Connective.AND, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                        elif conn == &#39;or&#39;:
+                            return Formula(tokendict_to_string(pt), Connective.OR, parse(ats[&#39;child&#39;][1 - ccidx]), parse(other))
+                elif other[&#39;value&#39;] == &#39;SBAR&#39;:
+                    # SBAR/@S pair
+                    inidx = firstidx(other[&#39;child&#39;], &#39;IN&#39;)
+                    if inidx != None:
+                        conn = other[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                        if conn.lower() == &#39;if&#39;:
+                            return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(other[&#39;child&#39;][1 - inidx]), parse(ats))
+                elif hasInnerSbar(ats):
+                    # Split at inner SBARS.
+                    sbar, rest = splitInnerSbar(pt)
+                    inidx = firstidx(sbar[&#39;child&#39;], &#39;IN&#39;)
+                    conn = sbar[&#39;child&#39;][inidx][&#39;child&#39;][0][&#39;value&#39;]
+                    if conn.lower() == &#39;if&#39;:
+                        return Formula(tokendict_to_string(pt), Connective.IMPLIES, parse(sbar[&#39;child&#39;][1 - inidx]), parse(rest))
+            # other pair
+            # should split propositions over subjects and VPs
+            if hasInnerNot(pt):
+                # Split at inner RB &#39;not&#39;
+                # Counts split VPs as whole phrases currently
+                rb, rest = splitInnerNot(pt)
+                conn = rb[&#39;child&#39;][0][&#39;value&#39;]
+                if conn == &#39;if&#39;:
+                    return Formula(tokendict_to_string(pt), Connective.NOT, parse(rest), None)
+            return Formula(tokendict_to_string(pt), None, None, None)
+    return parse(self.binarizedParseTreeTokenDict())</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+<dt id="role.parse.SequentInterface"><code class="flex name class">
+<span>class <span class="ident">SequentInterface</span></span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">class SequentInterface:
+    def land(self):
+        pass
+    def lor(self):
+        pass
+    def lif(self):
+        pass
+    def lneg(self):
+        pass
+    def rand(self):
+        pass
+    def ror(self):
+        pass
+    def rif(self):
+        pass
+    def rneg(self):
+        pass
+    def parse(self):
+        pass</code></pre>
+</details>
+<h3>Methods</h3>
+<dl>
+<dt id="role.parse.SequentInterface.land"><code class="name flex">
+<span>def <span class="ident">land</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def land(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.lif"><code class="name flex">
+<span>def <span class="ident">lif</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lif(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.lneg"><code class="name flex">
+<span>def <span class="ident">lneg</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lneg(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.lor"><code class="name flex">
+<span>def <span class="ident">lor</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def lor(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.parse"><code class="name flex">
+<span>def <span class="ident">parse</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def parse(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.rand"><code class="name flex">
+<span>def <span class="ident">rand</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rand(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.rif"><code class="name flex">
+<span>def <span class="ident">rif</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rif(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.rneg"><code class="name flex">
+<span>def <span class="ident">rneg</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def rneg(self):
+    pass</code></pre>
+</details>
+</dd>
+<dt id="role.parse.SequentInterface.ror"><code class="name flex">
+<span>def <span class="ident">ror</span></span>(<span>self)</span>
+</code></dt>
+<dd>
+<div class="desc"></div>
+<details class="source">
+<summary>
+<span>Expand source code</span>
+</summary>
+<pre><code class="python">def ror(self):
+    pass</code></pre>
+</details>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</article>
+<nav id="sidebar">
+<h1>Index</h1>
+<div class="toc">
+<ul></ul>
+</div>
+<ul id="index">
+<li><h3>Super-module</h3>
+<ul>
+<li><code><a title="role" href="index.html">role</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-functions">Functions</a></h3>
+<ul class="">
+<li><code><a title="role.parse.parsetree_to_string" href="#role.parse.parsetree_to_string">parsetree_to_string</a></code></li>
+<li><code><a title="role.parse.printTree" href="#role.parse.printTree">printTree</a></code></li>
+<li><code><a title="role.parse.subsentences" href="#role.parse.subsentences">subsentences</a></code></li>
+<li><code><a title="role.parse.tokendict_to_string" href="#role.parse.tokendict_to_string">tokendict_to_string</a></code></li>
+</ul>
+</li>
+<li><h3><a href="#header-classes">Classes</a></h3>
+<ul>
+<li>
+<h4><code><a title="role.parse.Sentence" href="#role.parse.Sentence">Sentence</a></code></h4>
+<ul class="">
+<li><code><a title="role.parse.Sentence.binarizedParseTreeTokenDict" href="#role.parse.Sentence.binarizedParseTreeTokenDict">binarizedParseTreeTokenDict</a></code></li>
+<li><code><a title="role.parse.Sentence.parseFormulasTokenDict" href="#role.parse.Sentence.parseFormulasTokenDict">parseFormulasTokenDict</a></code></li>
+</ul>
+</li>
+<li>
+<h4><code><a title="role.parse.SequentInterface" href="#role.parse.SequentInterface">SequentInterface</a></code></h4>
+<ul class="two-column">
+<li><code><a title="role.parse.SequentInterface.land" href="#role.parse.SequentInterface.land">land</a></code></li>
+<li><code><a title="role.parse.SequentInterface.lif" href="#role.parse.SequentInterface.lif">lif</a></code></li>
+<li><code><a title="role.parse.SequentInterface.lneg" href="#role.parse.SequentInterface.lneg">lneg</a></code></li>
+<li><code><a title="role.parse.SequentInterface.lor" href="#role.parse.SequentInterface.lor">lor</a></code></li>
+<li><code><a title="role.parse.SequentInterface.parse" href="#role.parse.SequentInterface.parse">parse</a></code></li>
+<li><code><a title="role.parse.SequentInterface.rand" href="#role.parse.SequentInterface.rand">rand</a></code></li>
+<li><code><a title="role.parse.SequentInterface.rif" href="#role.parse.SequentInterface.rif">rif</a></code></li>
+<li><code><a title="role.parse.SequentInterface.rneg" href="#role.parse.SequentInterface.rneg">rneg</a></code></li>
+<li><code><a title="role.parse.SequentInterface.ror" href="#role.parse.SequentInterface.ror">ror</a></code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</nav>
+</main>
+<footer id="footer">
+<p>Generated by <a href="https://pdoc3.github.io/pdoc"><cite>pdoc</cite> 0.8.3</a>.</p>
+</footer>
+</body>
+</html>

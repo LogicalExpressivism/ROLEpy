@@ -39,4 +39,5 @@ def add():
     f = open('Forest.txt', 'a')
     f.write(newseq)
     f.close
+    newseq.sequents.main()
     

@@ -1,5 +1,5 @@
-
-## Sequent.planter() takes a sequent and makes it an entry in Forest 
+## Instructions:
+ ## Sequent.planter() takes a sequent and makes it an entry in Forest 
 ## Sequent.deparen() removes outermost parentheses for parsing, which allows us to use as many parentheses we want when specifying connectives
 ## Sequent.parser() takes a sequent and finds out where and what the main connective is of the leftmost logically complex sentence and sends that info to router()
 ## Sequent.router() shuffles that sequent off to the appropriate decomposition algorithm
@@ -7,8 +7,19 @@
 ## Sequent.gamut() takes a previously specified sequent, plants it, and runs the parser
 ## debug() prints the whole forest in a mostly easy to read way (for now, until the forest gets too big) to check whether everything is as it should be
 ##
-## money() is the main operator. It takes a sequent, plants it if it isn't already planted, and decomposes it to atoms.
-## 
+## main() is the main operator. It takes a sequent, plants it if it isn't already planted, and decomposes it to atoms.
+##
+## Sequents must be formatted thus: Sequent('SOME_STRING', 'M', ['(FIRST_PREMISE)', '(SECOND_PREMISEa) CONNECTIVE (SECOND_PREMISEb)'], ['(CONCLUSION)'])
+## Each root sequent should begin with a location of 'M' and each sentence should be separated from connectives and each other by parentheses. 
+## For example, my sequent 'killers', a reference to Human by The Killers, is:
+## Sequent('killers', 'M', ['(Socrates is human implies Socrates is mortal)', '((Socrates is human or Socrates is dancer) and (not (Socrates is dancer)))'], ['(Socrates is mortal)'])
+##
+## A note about how decomposition works:
+## Currently, the main function can only keep one version of the sequent it's working on in memory at a time. This means we can't go back once the function starts running. In the decomposition functions,
+## you will see us create a sequent, add it to the forest, and then change the parameters of that same sequent. Because of the way this works (that is, because I couldn't figure out how to do this in a
+## better way) the sequents in the forest and the sequent on which the decomposition functions operate are different objects. If there is a way to load sequents from the forest and work on those directly,
+## that might be preferable in the long run, since it might allow us to hop around the tree with the right sort of navigation function.
+##
 #############################################
 
 
@@ -113,89 +124,89 @@ class Sequent: #AKA the Trees
       self.planter()
 
    def land(self, position, index): #Position is the place of the sentence in the antecedent we're decomposing (starting at 0); index is the place in that sentence of the word which is the main connective
-      location = str(self.location + 'M') 
-      premises = copy.deepcopy(self.antecedent)
-      mainprop = premises[position].split(" ")
-      del premises[position]
-      ahead = " ".join(mainprop[0:index])
-      behind = " ".join(mainprop[index + 1:])
-      premises.append(ahead)
-      premises.append(behind)
-      levelup = Sequent(self.name, location, premises, self.consequent)
-      levelup.planter()
-      self.location = location
-      self.antecedent = premises
+      location = str(self.location + 'M') #marks and alters the location of the sequent for later
+      premises = copy.deepcopy(self.antecedent) #makes a copy of the premises on which we can operate
+      mainprop = premises[position].split(" ") #separates the relevant premise into a list of its words
+      del premises[position] #deletes the sentence on which we operate from the premise, we'll put it back together later
+      ahead = " ".join(mainprop[0:index]) #puts together all the words before the connecive, i.e., the first conjunct
+      behind = " ".join(mainprop[index + 1:]) #puts together all the words after the connective, i.e., the second conjunct
+      premises.append(ahead) #puts the first conjunct back into the antecedent
+      premises.append(behind) #puts the second conjunct back into the antecedent
+      levelup = Sequent(self.name, location, premises, self.consequent) #the sequent we started with but with a new antecedent
+      levelup.planter() #adds the sequent to the Forest
+      self.location = location #applies the change in location to the new sequent to the sequent we're currently working on
+      self.antecedent = premises #applies the change in premises to the new sequent to the sequent we're currently working on
         
    def lor(self, position, index):
-      lpremises = copy.deepcopy(self.antecedent)
-      lconclusions = copy.deepcopy(self.consequent)
-      rpremises = copy.deepcopy(self.antecedent)
-      rconclusions = copy.deepcopy(self.consequent)
-      mainprop = rpremises[position].split(" ")
-      del lpremises[position]
-      del rpremises[position]
-      ahead = " ".join(mainprop[0:index])
-      behind = " ".join(mainprop[index + 1:])
-      rpremises.append(behind)
-      lpremises.append(ahead)
-      llocation = str(self.location + 'L')
-      llevelup = Sequent(self.name, llocation, lpremises, lconclusions)
-      llevelup.planter()
-      rlocation = str(self.location + 'R')
-      rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions)
-      rlevelup.planter()
-      if self.atomcheck() == False:
+      lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
+      lconclusions = copy.deepcopy(self.consequent) #conclusions to be used in the left parent
+      rpremises = copy.deepcopy(self.antecedent) #premises to be used in the right parent
+      rconclusions = copy.deepcopy(self.consequent) #conclusions to be used in the right parent
+      mainprop = rpremises[position].split(" ") #splits the sentence containing the main connective into words––rpremises and lpremises are interchangeable here
+      del lpremises[position] #removes the disjunction from the premises
+      del rpremises[position] #removes the disjunction from the premises
+      ahead = " ".join(mainprop[0:index]) #puts the left disjunct back together
+      behind = " ".join(mainprop[index + 1:]) #puts the right disjunct back together
+      rpremises.append(behind) #puts one disjunct in the premises of the right parent
+      lpremises.append(ahead) #puts the other disjunct in the premises of the left parent
+      llocation = str(self.location + 'L') #changes the location for the left parent
+      llevelup = Sequent(self.name, llocation, lpremises, lconclusions) #creates a placeholder sequent for the left parent
+      llevelup.planter() #plants the left parent
+      rlocation = str(self.location + 'R') #changes the location for the right parent
+      rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions) #creates a placeholder sequent for the right parent
+      rlevelup.planter() #plants the right parent
+      if self.atomcheck() == False:       #If the resulting left parent is not atomic, we want to operate on it next
          self.location = llocation
          self.antecedent = lpremises
-         self.consequent = lconclusions
+         self.consequent = lconclusions   #If the resulting left parent is atomic, we want to operate on the right parent instead.
       elif self.atomcheck() == True:
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
    
    def lif(self, position, index):
-      lpremises = copy.deepcopy(self.antecedent)
-      lconclusions = copy.deepcopy(self.consequent)
-      rpremises = copy.deepcopy(self.antecedent)
-      rconclusions = copy.deepcopy(self.consequent)
-      mainprop = rpremises[position].split(" ")
-      del lpremises[position]
-      del rpremises[position]
-      ahead = " ".join(mainprop[0:index])
-      behind = " ".join(mainprop[index + 1:])
-      rpremises.append(behind)
-      lconclusions.append(ahead)
-      llocation = str(self.location + 'L')
-      llevelup = Sequent(self.name, llocation, lpremises, lconclusions)
-      llevelup.planter()
-      rlocation = str(self.location + 'R')
-      rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions)
-      rlevelup.planter()
-      if self.atomcheck() == False:
+      lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
+      lconclusions = copy.deepcopy(self.consequent) #conclusions to be used in the left parent
+      rpremises = copy.deepcopy(self.antecedent) #premises to be used in the right parent
+      rconclusions = copy.deepcopy(self.consequent) #conclusions to be used in the right parent
+      mainprop = rpremises[position].split(" ") #splits the sentence containing the main connective into words––rpremises and lpremises are interchangeable here
+      del lpremises[position] #removes the conditional from the premises 
+      del rpremises[position] #removes the conditional from the premises
+      ahead = " ".join(mainprop[0:index]) #puts the antecedent back together
+      behind = " ".join(mainprop[index + 1:]) #puts the consequent back together
+      rpremises.append(behind) #puts the antecedent into the premises of the right parent
+      lconclusions.append(ahead) #puts the consequent into the conclusions of the left parent
+      llocation = str(self.location + 'L') #changes the location for the left parent
+      llevelup = Sequent(self.name, llocation, lpremises, lconclusions) #creates a placeholder sequent for the left parent
+      llevelup.planter() #plants the left parent
+      rlocation = str(self.location + 'R') #changes the location for the right parent
+      rlevelup = Sequent(self.name, rlocation, rpremises, rconclusions) #creates a placeholder sequent for the right parent
+      rlevelup.planter() #plants the right parent
+      if self.atomcheck() == False: #if the resulting left parent is not atomic, we want to operate on it next
          self.location = llocation
          self.antecedent = lpremises
          self.consequent = lconclusions
-      elif self.atomcheck() == True:
+      elif self.atomcheck() == True: #if the resulting left parent is atomic, we want to operate on the right parent instead
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
          
-   def lneg(self, position, index):
-      location = str(self.location + 'M')
-      premises = copy.deepcopy(self.antecedent)
-      conclusions = copy.deepcopy(self.consequent)
-      mainprop = premises[position].split(" ")
-      del premises[position]
-      del mainprop[index]
-      prop = " ".join(mainprop)
-      conclusions.append(prop)
-      levelup = Sequent(self.name, location, premises, conclusions)
-      levelup.planter()
-      self.location = location
-      self.consequent = conclusions
-      self.antecedent = premises
+   def lneg(self, position, index): 
+      location = str(self.location + 'M') #marks and alters the location of the sequent for later
+      premises = copy.deepcopy(self.antecedent) #copies the premises
+      conclusions = copy.deepcopy(self.consequent) #copies the conclusions
+      mainprop = premises[position].split(" ") #splits the sentence containing the main connective into words
+      del premises[position] #removes the negatum from the sequent
+      del mainprop[index] #removes the negation from the negatum
+      prop = " ".join(mainprop) #puts the negatum back together
+      conclusions.append(prop) #puts the negatum (sans negation) in the conclusions
+      levelup = Sequent(self.name, location, premises, conclusions) #creates a placeholder sequent
+      levelup.planter() #plants the parent
+      self.location = location #alters the sequent 
+      self.consequent = conclusions #alters the sequent 
+      self.antecedent = premises #alters the sequent
          
-   def rand(self, position, index): #Still requires integration with self.sequent and self.primer()
+   def rand(self, position, index): #See notes for lor; they are the same except l and r are swapped in the natural places
       lpremises = copy.deepcopy(self.antecedent)
       lconclusions = copy.deepcopy(self.consequent)
       rpremises = copy.deepcopy(self.antecedent)
@@ -222,7 +233,7 @@ class Sequent: #AKA the Trees
          self.antecedent = rpremises
          self.consequent = rconclusions
          
-   def ror(self, position, index):
+   def ror(self, position, index): #See notes for land; they are the same except l and r are swapped in the natural places
       location = str(self.location + 'M')
       conclusions = copy.deepcopy(self.consequent)
       mainprop = conclusions[position].split(" ")
@@ -236,23 +247,23 @@ class Sequent: #AKA the Trees
       self.location = location
       self.consequent = conclusions
          
-   def rif(self, position, index):
-      location = str(self.location + 'M')
-      premises = copy.deepcopy(self.antecedent)
-      conclusions = copy.deepcopy(self.consequent)
-      mainprop = conclusions[position].split(" ")
-      del conclusions[position]
-      ahead = " ".join(mainprop[0:index])
-      behind = " ".join(mainprop[index + 1:])
-      premises.append(ahead)
-      conclusions.append(behind)
-      levelup = Sequent(self.name, location, premises, conclusions)
-      levelup.planter()
-      self.location = location
-      self.antecedent = premises
-      self.consequent = conclusions
+   def rif(self, position, index): 
+      location = str(self.location + 'M') #notes and changes the location for later
+      premises = copy.deepcopy(self.antecedent) #makes a copy of the premises
+      conclusions = copy.deepcopy(self.consequent) #makes a copy of the conclusion
+      mainprop = conclusions[position].split(" ") #splits the conditional into words
+      del conclusions[position] #deletes the conditional
+      ahead = " ".join(mainprop[0:index]) #puts the antecedent back together
+      behind = " ".join(mainprop[index + 1:]) #puts the consequent back together
+      premises.append(ahead) #puts the antecedent on with the premises
+      conclusions.append(behind) #puts the consequent with the conclusions
+      levelup = Sequent(self.name, location, premises, conclusions) #creates a placeholder sequent
+      levelup.planter() #plants the parent
+      self.location = location #alters the sequent
+      self.antecedent = premises #alters the sequent 
+      self.consequent = conclusions #alters the sequent
          
-   def rneg(self, position, index):
+   def rneg(self, position, index): #See notes for lneg; they are the same except l and r are swapped in the natural places
       location = str(self.location + 'M')
       premises = copy.deepcopy(self.antecedent)
       conclusions = copy.deepcopy(self.consequent)
@@ -291,14 +302,11 @@ class Sequent: #AKA the Trees
             self.rneg(position, index)
 
    def parser(self):
-      ##currently locates (and prints) the main connective of each antecedent of a sequent
+      ##currently locates the main connective of each antecedent of a sequent
       self.deparen()
       if self.atomcheck() == False:
-        # print ('Name = ' + self.name)
          seqname = self.name
-        # print ('Ant = ' + str(self.antecedent))
          premises = self.antecedent
-        # print ('Con = ' + str(self.consequent))
          conclusions = self.consequent
          found = False
          index = []
@@ -323,8 +331,8 @@ class Sequent: #AKA the Trees
                      else:
                         letters = list(word)
                         for letter in letters:   #This loop keeps track of degrees. There should only
-                           ##be one connective at degree 0, and it should be the main
-                           ##connective.
+                                                 ##be one connective at degree 0, and it should be the main
+                                                 ##connective.
                            if letter == "(":
                               degree = degree + 1
                            elif letter == ")":
@@ -360,9 +368,9 @@ class Sequent: #AKA the Trees
          elif found == False:
             for x in range(0, len(self.location)):
                if list(self.location)[x] == 'L': 
-                  print ("There are no more complex sentences to decompose")
+                  print ("There are no more complex sentences to decompose, and really you should never even see this message, so how did you get here? Someone must have broken something. \nYou can run the checker() function on this sequent to see what the current sequent looks like.")
       elif self.atomcheck == True:
-         print ('This sequent is already atomic')
+         print ('This sequent is already atomic.')
       self.deparen()
 
    def checker(self): #Shows all the values of a given sequent
@@ -374,10 +382,10 @@ class Sequent: #AKA the Trees
       print (self.atomcheck())
       print ('')
 
-   def money(self): #The main function
+   def main(self): #The main function
       self.deparen() #Cleans up the sequent
       if self.name not in Forest.keys(): #plants the tree if not planted already
-         self.parser()
+         self.planter() #***If something is broken, try replacing planter here with parser.
       while self.atomcheck() == False: #Decomposes the leftmost connective until there are no connectives to decompose
          self.parser()
       for x in range (0, len(self.location) - 1): #Recursive loop makes sure we hit all the rightward branching rules
@@ -390,9 +398,9 @@ class Sequent: #AKA the Trees
             self.location = newloc #edits the sequent so we can run our functions
             self.antecedent = Forest[self.name][newloc]['Antecedents'] #Gets the values from the relevant place in the tree
             self.consequent = Forest[self.name][newloc]['Consequents'] #Gets the values from the relevant place in the tree
-            self.money() #Clears the tree starting from here.
+            self.main() #Clears the tree starting from here.
                      
-def debug():
+def debug(): #prints the forest in its (messy) entirety
    for x in Forest:
       print ('\'' + x + '\':')
       for y in Forest[x]:
@@ -403,27 +411,25 @@ def debug():
                print ('         ' + a)
 
 
-def init():
-   if os.path.exists('Forest.txt'):
-      f = open('Forest.txt', 'r')
+def init(): #gets everything from the text file
+   if os.path.exists('Forest.txt'): #Checks whether there is such a file locally
+      f = open('Forest.txt', 'r') #opens it if there is
    else:
-      
-      f = open('Forest.txt', 'x')
-      
-   for line in f:
-      line = line.replace('\'', '')
-      line = line.replace('\n', '')
-      seq = line.split(';')
-      ant = seq[2]
-      con = seq[3]
-      ant = ant.replace('[', '')
+      f = open('Forest.txt', 'x') #creates one if not
+   for line in f: #for each line in the file
+      line = line.replace('\n', '') #removes all the new line commands
+      line = line.replace('\'', '') #removes all the back slashes
+      seq = line.split(';') #a list of the sequent's arguments
+      ant = seq[2] #the antecedents
+      con = seq[3] #the consequents
+      ant = ant.replace('[', '') #removes the square brackets, which if kept would make for a proliferation of square brackets in the output
       ant = ant.replace(']', '')
-      ant = ant.split(',')
+      ant = ant.split(',') #turns ant from a string into a list
       con = con.replace('[', '')
       con = con.replace(']', '')
-      con = con.split(',')
-      Seq = Sequent((seq[0]), str(seq[1]), ant, con)
-      Seq.money()
+      con = con.split(',') #turns con from a string into a list
+      Seq = Sequent((seq[0]), str(seq[1]), ant, con) #makes a sequent 
+      Seq.main() #runs our program on the sequent
    
    
 
@@ -432,6 +438,6 @@ def init():
 ##testsuite = [killers, andseq, orseq, impseq, noseq, bigboy]
 ##
 ##for x in testsuite:
-##   x.money()
+##   x.main()
 ##
 ##debug()

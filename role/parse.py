@@ -1,14 +1,7 @@
 import copy
-import os
 import stanza
 from pprint import pprint
 from google.protobuf.json_format import MessageToDict
-
-# Download and extract corenlp to ./corenlp to be able to use it.
-os.environ["CORENLP_HOME"] = "./corenlp"
-
-from stanza.server import CoreNLPClient
-from stanza.server import to_text
 
 from role.Sequent import Connective, Formula
 
@@ -194,6 +187,8 @@ class Sentence:
                     elif hasInnerSbar(ats):
                         # Split at inner SBARS.
                         sbar, rest = splitInnerSbar(pt)
+                        # sbar should be subscriptable here, fix this sloppy coding!
+                        assert sbar is not None
                         inidx = firstidx(sbar['child'], 'IN')
                         conn = sbar['child'][inidx]['child'][0]['value']
                         if conn.lower() == 'if':
@@ -204,6 +199,8 @@ class Sentence:
                     # Split at inner RB 'not'
                     # Counts split VPs as whole phrases currently
                     rb, rest = splitInnerNot(pt)
+                    # Same with rb here!
+                    assert rb is not None
                     conn = rb['child'][0]['value']
                     if conn == 'if':
                         return Formula(tokendict_to_string(pt), Connective.NOT, parse(rest), None)

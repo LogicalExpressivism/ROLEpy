@@ -1,7 +1,7 @@
 import click
 import json
 import os
-os.environ["CORENLP_HOME"] = "./corenlp"
+os.environ["CORENLP_HOME"] = "./stanford-corenlp-4.1.0"
 import stanza
 from stanza.server import CoreNLPClient
 from pprint import pprint

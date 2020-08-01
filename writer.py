@@ -29,7 +29,8 @@ def add():
     for x in range (0, numant): #generates a prompt for each antecedent
         ant += input('Antecedent ' + str(x+1) + ': ') #user enters antecedent
         ant += ',' #adds commas to separate antecedents
-    del ant[-1] #eliminates the last comma that was put there by the loop
+    if ant != []:
+        del ant[-1] #eliminates the last comma that was put there by the loop
     ant = ''.join(ant) #puts all the antecedents into a string
     numcon = -1 #This next bit is the same as for antecedents
     while numcon < 0: 
@@ -43,7 +44,8 @@ def add():
     for x in range (0, numcon):
         con += input('Consequent ' + str(x+1) + ': ')
         con += ','
-    del con[-1]
+    if con != []: 
+        del con[-1]
     con = ''.join(con)
     newseq = str('\n' + name + ';M;[' + ant + '];[' + con + ']') #creates a sequent out of the gathered data
     f = open('Forest.txt', 'a') #opens the forest

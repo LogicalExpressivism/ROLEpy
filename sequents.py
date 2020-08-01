@@ -25,10 +25,20 @@
 
 import copy
 import os
-
+from datetime import datetime
 
 Connectives = ["and", "or", "implies", "not"]
 Forest = {} #Dictionary containing the Trees
+now = datetime.now()
+dt_string = now.strftime("%d-%m-%Y-%H-%M-%S.txt")
+path = 'Runs'
+if not os.path.exists(path):
+    os.makedirs(path)
+filename = dt_string
+##At any point we can write whatever we want into the file by putting it in between the temp_file.write brackets
+##with open(os.path.join(path, filename), 'w') as temp_file: 
+##    temp_file.write()
+
 
 class Sequent: #AKA the Trees
    def __init__(self, name, location, antecedent, consequent):
@@ -137,6 +147,9 @@ class Sequent: #AKA the Trees
       levelup.planter() #adds the sequent to the Forest
       self.location = location #applies the change in location to the new sequent to the sequent we're currently working on
       self.antecedent = premises #applies the change in premises to the new sequent to the sequent we're currently working on
+      printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
         
    def lor(self, position, index):
       lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
@@ -164,6 +177,12 @@ class Sequent: #AKA the Trees
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
+      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
+      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
    
    def lif(self, position, index):
       lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
@@ -191,6 +210,13 @@ class Sequent: #AKA the Trees
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
+      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
+      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
+
          
    def lneg(self, position, index): 
       location = str(self.location + 'M') #marks and alters the location of the sequent for later
@@ -206,6 +232,9 @@ class Sequent: #AKA the Trees
       self.location = location #alters the sequent 
       self.consequent = conclusions #alters the sequent 
       self.antecedent = premises #alters the sequent
+      printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
          
    def rand(self, position, index): #See notes for lor; they are the same except l and r are swapped in the natural places
       lpremises = copy.deepcopy(self.antecedent)
@@ -233,6 +262,13 @@ class Sequent: #AKA the Trees
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
+      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
+      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
+
          
    def ror(self, position, index): #See notes for land; they are the same except l and r are swapped in the natural places
       location = str(self.location + 'M')
@@ -247,6 +283,9 @@ class Sequent: #AKA the Trees
       levelup.planter()
       self.location = location
       self.consequent = conclusions
+      printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
          
    def rif(self, position, index): 
       location = str(self.location + 'M') #notes and changes the location for later
@@ -263,6 +302,9 @@ class Sequent: #AKA the Trees
       self.location = location #alters the sequent
       self.antecedent = premises #alters the sequent 
       self.consequent = conclusions #alters the sequent
+      printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
          
    def rneg(self, position, index): #See notes for lneg; they are the same except l and r are swapped in the natural places
       location = str(self.location + 'M')
@@ -278,6 +320,9 @@ class Sequent: #AKA the Trees
       self.location = location
       self.consequent = conclusions
       self.antecedent = premises
+      printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
          
    def router(self, side, position, connective, index): #sends parser to whichever
       #decomposition function is appropriate, noting which side we're working with,
@@ -429,16 +474,9 @@ def init(): #gets everything from the text file
       con = con.replace('[', '')
       con = con.replace(']', '')
       con = con.split(',') #turns con from a string into a list
-      Seq = Sequent((seq[0]), str(seq[1]), ant, con) #makes a sequent 
+      Seq = Sequent((seq[0]), str(seq[1]), ant, con) #makes a sequent
+      printseq = str('\n' + Seq.name + ';' + Seq.location + ';' + str(Seq.antecedent) + ';' + str(Seq.consequent))
+      with open(os.path.join(path, filename), 'a') as temp_file: 
+         temp_file.write(printseq)
       Seq.main() #runs our program on the sequent
    
-   
-
-
-##
-##testsuite = [killers, andseq, orseq, impseq, noseq, bigboy]
-##
-##for x in testsuite:
-##   x.main()
-##
-##debug()

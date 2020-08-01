@@ -26,6 +26,7 @@
 import copy
 import os
 
+
 Connectives = ["and", "or", "implies", "not"]
 Forest = {} #Dictionary containing the Trees
 
@@ -385,7 +386,7 @@ class Sequent: #AKA the Trees
    def main(self): #The main function
       self.deparen() #Cleans up the sequent
       if self.name not in Forest.keys(): #plants the tree if not planted already
-         self.planter() #***If something is broken, try replacing planter here with parser.
+         self.parser()
       while self.atomcheck() == False: #Decomposes the leftmost connective until there are no connectives to decompose
          self.parser()
       for x in range (0, len(self.location) - 1): #Recursive loop makes sure we hit all the rightward branching rules

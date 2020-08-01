@@ -36,7 +36,7 @@ if not os.path.exists(path):
     os.makedirs(path)
 filename = dt_string
 ##At any point we can write whatever we want into the file by putting it in between the temp_file.write brackets
-##with open(os.path.join(path, filename), 'w') as temp_file: 
+##with open(os.path.join(path, filename), 'a') as temp_file: 
 ##    temp_file.write()
 
 
@@ -66,6 +66,17 @@ class Sequent: #AKA the Trees
             if y in x.split(' '):
                atomic = False
       return atomic
+
+   def pratom(self):
+        if self.atomcheck() == True:
+            file = 'Atoms'
+            if not os.path.exists(file):
+                os.makedirs(file)
+            printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+            with open(os.path.join(file, file), 'a') as temp_file: 
+                temp_file.write(printseq)
+            
+            
 
    def deparen(self):                        #For each proposition in the sequent, removes the
       ##outermost parentheses (()).
@@ -150,6 +161,7 @@ class Sequent: #AKA the Trees
       printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
       with open(os.path.join(path, filename), 'a') as temp_file: 
          temp_file.write(printseq)
+      self.pratom()
         
    def lor(self, position, index):
       lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
@@ -173,16 +185,18 @@ class Sequent: #AKA the Trees
          self.location = llocation
          self.antecedent = lpremises
          self.consequent = lconclusions   #If the resulting left parent is atomic, we want to operate on the right parent instead.
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
       elif self.atomcheck() == True:
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
-      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
-      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
+         self.pratom()
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
+
    
    def lif(self, position, index):
       lpremises = copy.deepcopy(self.antecedent) #premises to be used in the left parent
@@ -206,16 +220,17 @@ class Sequent: #AKA the Trees
          self.location = llocation
          self.antecedent = lpremises
          self.consequent = lconclusions
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
       elif self.atomcheck() == True: #if the resulting left parent is atomic, we want to operate on the right parent instead
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
-      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
-      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
+         self.pratom()
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
 
          
    def lneg(self, position, index): 
@@ -235,6 +250,7 @@ class Sequent: #AKA the Trees
       printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
       with open(os.path.join(path, filename), 'a') as temp_file: 
          temp_file.write(printseq)
+      self.pratom()
          
    def rand(self, position, index): #See notes for lor; they are the same except l and r are swapped in the natural places
       lpremises = copy.deepcopy(self.antecedent)
@@ -258,16 +274,18 @@ class Sequent: #AKA the Trees
          self.location = llocation
          self.antecedent = lpremises
          self.consequent = lconclusions
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
       elif self.atomcheck() == True:
          self.location = rlocation
          self.antecedent = rpremises
          self.consequent = rconclusions
-      printseq = str('\n' + self.name + ';' + llocation + ';' + str(lpremises) + ';' + str(lconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
-      printseq = str('\n' + self.name + ';' + rlocation + ';' + str(rpremises) + ';' + str(rconclusions))
-      with open(os.path.join(path, filename), 'a') as temp_file: 
-         temp_file.write(printseq)
+         printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
+         with open(os.path.join(path, filename), 'a') as temp_file: 
+             temp_file.write(printseq)
+         self.pratom()
+
 
          
    def ror(self, position, index): #See notes for land; they are the same except l and r are swapped in the natural places
@@ -286,6 +304,7 @@ class Sequent: #AKA the Trees
       printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
       with open(os.path.join(path, filename), 'a') as temp_file: 
          temp_file.write(printseq)
+      self.pratom()
          
    def rif(self, position, index): 
       location = str(self.location + 'M') #notes and changes the location for later
@@ -305,6 +324,7 @@ class Sequent: #AKA the Trees
       printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
       with open(os.path.join(path, filename), 'a') as temp_file: 
          temp_file.write(printseq)
+      self.pratom()
          
    def rneg(self, position, index): #See notes for lneg; they are the same except l and r are swapped in the natural places
       location = str(self.location + 'M')
@@ -323,6 +343,7 @@ class Sequent: #AKA the Trees
       printseq = str('\n' + self.name + ';' + self.location + ';' + str(self.antecedent) + ';' + str(self.consequent))
       with open(os.path.join(path, filename), 'a') as temp_file: 
          temp_file.write(printseq)
+      self.pratom()
          
    def router(self, side, position, connective, index): #sends parser to whichever
       #decomposition function is appropriate, noting which side we're working with,

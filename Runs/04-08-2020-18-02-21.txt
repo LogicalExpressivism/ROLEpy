@@ -1,0 +1,3 @@
+
+killers;MRMRM;['Socrates is mortal', 'Socrates is dancer'];['Socrates is mortal', 'Socrates is dancer']
+noseq;MMM;['A'];['A']

@@ -43,7 +43,9 @@ class Sequent:
                 setattr(self, side, []) #clears the sentences
                 propset = []
                 for sentence in sentences: #for each premise or conclusion in the antecedent or consequent:
-                    letters = list(sentence) 
+                    print(sentence)
+                    if (len(sentence) == 0): continue
+                    letters = list(sentence)
                     if letters[0] == '(' and letters[-1] == ')': #Only runs if the first and last character are '(' and ')'
                         valid = True #i.e., it is valid to remove the outermost parentheses
                         count = 0 #times we have encountered an unpaired '('
@@ -242,6 +244,7 @@ class Sequent:
                 for y in self.location:
                     if y == 'L':
                         print ('There are no more complex sentences to decompose, and really you shouldn\'t even be able to see this message.')
+                        quit()
                         
     def main(self):
         self.atomcheck()

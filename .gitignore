@@ -1,4 +1,6 @@
 stanford-corenlp-latest.zip
 stanford-corenlp-*/
 UDepLambda/
+Atoms/
+Runs/
 __pycache__

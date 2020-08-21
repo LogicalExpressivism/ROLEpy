@@ -240,8 +240,8 @@ class Sequent:
             if found == True:
                 self.router(connective, side, position, index)
             elif found == False:
-                for y in range(0, len(self.location)):
-                    if list(self.location)[y] == 'L':
+                for y in self.location:
+                    if y == 'L':
                         print ('There are no more complex sentences to decompose, and really you shouldn\'t even be able to see this message.')
                         
     def main(self):

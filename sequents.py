@@ -104,7 +104,6 @@ class Sequent:
             for prop in getattr(self, side):
                 if len(prop) > 0:
                     prop = list(prop)
-                    print (prop[0])
                     if prop[0] == ' ':
                         del prop[0]
                     prop = ''.join(prop)    

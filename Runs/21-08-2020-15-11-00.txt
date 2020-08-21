@@ -1,0 +1,68 @@
+Root; Location; Antecedent; Consequent; Atomic; Reflexive
+repseq;M;['(not (A implies B)) implies (C implies D)']; ;False;False
+repseq;ML;[];[' ', 'not (A implies B)'];False;False
+repseq;MR;['C implies D'];[' '];False;False
+repseq;MLM;['A implies B'];[' '];False;False
+repseq;MLML;[];[' ', 'A'];True;False
+repseq;MLMR;['B'];[' '];True;False
+repseq;MRL;[];[' ', 'C'];True;False
+repseq;MRR;['D'];[' '];True;False
+killers;M;['Socrates is human implies Socrates is mortal', '(Socrates is human or Socrates is dancer) and (not (Socrates is dancer))'];['Socrates is mortal'];False;False
+killers;ML;['(Socrates is human or Socrates is dancer) and (not (Socrates is dancer))'];['Socrates is mortal', 'Socrates is human'];False;False
+killers;MR;['(Socrates is human or Socrates is dancer) and (not (Socrates is dancer))', 'Socrates is mortal'];['Socrates is mortal'];False;True
+killers;MLM;['Socrates is human or Socrates is dancer', 'not (Socrates is dancer)'];['Socrates is mortal', 'Socrates is human'];False;False
+killers;MLML;['not (Socrates is dancer)', 'Socrates is human'];['Socrates is mortal', 'Socrates is human'];False;True
+killers;MLMR;['not (Socrates is dancer)', 'Socrates is dancer'];['Socrates is mortal', 'Socrates is human'];False;False
+killers;MLMLM;['Socrates is human'];['Socrates is mortal', 'Socrates is human', 'Socrates is dancer'];True;True
+killers;MLMRM;[' Socrates is dancer'];['Socrates is mortal', ' Socrates is human', 'Socrates is dancer'];True;False
+killers;MRM;[' Socrates is mortal', 'Socrates is human or Socrates is dancer', 'not (Socrates is dancer)'];['Socrates is mortal'];False;False
+killers;MRML;[' Socrates is mortal', 'not (Socrates is dancer)', 'Socrates is human'];['Socrates is mortal'];False;False
+killers;MRMR;[' Socrates is mortal', 'not (Socrates is dancer)', 'Socrates is dancer'];['Socrates is mortal'];False;False
+killers;MRMLM;[' Socrates is mortal', 'Socrates is human'];['Socrates is mortal', 'Socrates is dancer'];True;False
+killers;MRMRM;[' Socrates is mortal', ' Socrates is dancer'];['Socrates is mortal', 'Socrates is dancer'];True;False
+andseq;M;['A and B'];['A and B'];False;True
+andseq;MM;['A', 'B'];['A and B'];False;False
+andseq;MML;['A', 'B'];['A'];True;True
+andseq;MMR;['A', 'B'];['B'];True;True
+orseq;M;['A or B'];['A or B'];False;True
+orseq;ML;['A'];['A or B'];False;False
+orseq;MR;['B'];['A or B'];False;False
+orseq;MLM;['A'];['A', 'B'];True;True
+orseq;MRM;['B'];['A', 'B'];True;True
+impseq;M;['A implies B'];['A implies B'];False;True
+impseq;ML;[];['A implies B', 'A'];False;False
+impseq;MR;['B'];['A implies B'];False;False
+impseq;MLM;['A'];['A', 'B'];True;True
+impseq;MRM;['B', 'A'];['B'];True;True
+noseq;M;['not (A)'];['not (A)'];False;True
+noseq;MM;[];['not (A)', 'A'];False;False
+noseq;MMM;['A'];['A'];True;True
+letterpar;M;['I ought to mail the letter'];['I ought to mail the letter or I ought to burn the letter'];False;False
+letterpar;MM;['I ought to mail the letter'];['I ought to mail the letter', 'I ought to burn the letter'];True;True
+DS;M;['not (All numbers are even)', '(All numbers are even) or (There are infinitely many prime numbers)'];['There are infinitely many prime numbers'];False;False
+DS;MM;['(All numbers are even) or (There are infinitely many prime numbers)'];['There are infinitely many prime numbers', 'All numbers are even'];False;False
+DS;MML;['All numbers are even'];['There are infinitely many prime numbers', 'All numbers are even'];True;True
+DS;MMR;['There are infinitely many prime numbers'];['There are infinitely many prime numbers', 'All numbers are even'];True;True
+tweety;M;['Tweety is a bird'];['Tweety flies'];True;False
+bigboy;M;['(not (A implies B)) and (C and (not D))', '(B or (not A)) or ((C and E) implies D)'];['not E'];False;False
+bigboy;MM;['(B or (not A)) or ((C and E) implies D)', 'not (A implies B)', 'C and (not D)'];['not E'];False;False
+bigboy;MML;['not (A implies B)', 'C and (not D)', 'B or (not A)'];['not E'];False;False
+bigboy;MMR;['not (A implies B)', 'C and (not D)', '(C and E) implies D'];['not E'];False;False
+bigboy;MMLM;['C and (not D)', 'B or (not A)'];['not E', 'A implies B'];False;False
+bigboy;MMLMM;['B or (not A)', 'C', 'not D'];['not E', 'A implies B'];False;False
+bigboy;MMLMML;['C', 'not D', 'B'];['not E', 'A implies B'];False;False
+bigboy;MMLMMR;['C', 'not D', 'not A'];['not E', 'A implies B'];False;False
+bigboy;MMLMMLM;['C', 'B'];['not E', 'A implies B', 'D'];False;False
+bigboy;MMLMMLMM;['C', 'B', 'E'];['A implies B', 'D'];False;False
+bigboy;MMLMMLMMM;['C', 'B', 'E', 'A'];['D', 'B'];True;True
+bigboy;MMLMMRM;['C', ' not A'];['not E', ' A implies B', 'D'];False;False
+bigboy;MMLMMRMM;['C'];['not E', ' A implies B', 'D', 'A'];False;False
+bigboy;MMLMMRMMM;['C', 'E'];[' A implies B', 'D', 'A'];False;False
+bigboy;MMLMMRMMMM;['C', 'E', ' A'];['D', 'A', 'B'];True;False
+bigboy;MMRM;[' C and (not D)', ' (C and E) implies D'];['not E', 'A implies B'];False;False
+bigboy;MMRMM;[' (C and E) implies D', ' C', 'not D'];['not E', 'A implies B'];False;False
+bigboy;MMRMML;[' C', 'not D'];['not E', 'A implies B', ' (C and E)'];False;False
+bigboy;MMRMMR;[' C', 'not D', 'D'];['not E', 'A implies B'];False;False
+bigboy;MMRMMLM;[' C'];['not E', 'A implies B', ' (C and E)', 'D'];False;False
+bigboy;MMRMMLMM;[' C', 'E'];['A implies B', ' (C and E)', 'D'];False;False
+bigboy;MMRMMLMMM;[' C', 'E', 'A'];[' (C and E)', 'D', 'B'];False;False

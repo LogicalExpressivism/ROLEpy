@@ -2,7 +2,7 @@ from collections import namedtuple
 from copy import copy
 from functools import reduce, wraps, partial
 from itertools import chain
-from typing import Callable, List, NamedTuple, NoReturn, Optional, Union, Tuple
+from typing import Callable, List, NamedTuple, NoReturn, Optional, Union, Tuple, NewType
 
 # import networkx as nx
 # from networkx.drawing.nx_agraph import graphviz_layout as layout
@@ -10,15 +10,13 @@ from typing import Callable, List, NamedTuple, NoReturn, Optional, Union, Tuple
 
 class Tm:
     """Abstract class for Terms."""
-    def depth(self) -> int:
-        raise NotImplementedError
-
     def __repr__(self):
         raise NotImplementedError
 
 # Singular Terms.
 
 class St(Tm):
+    """Singular Terms."""
     label: str
 
     def __init__(self, idx: int):
@@ -31,14 +29,12 @@ class St(Tm):
         if isinstance(other, St): return (self.label == other.label) and (self.idx == other.idx)
         return False
 
-# Compound terms.
-
 class Cn(Tm):
     """Connectives."""
     arity: int
     label: str
 
-    def __init__(self, *tms: List[Tm]):
+    def __init__(self, *tms: Tm):
         if len(tms) != self.arity:
             raise TypeError("This connective is of arity {}, but {} arguments were given.".format(self.arity, len(tms)))
         self.tms = tms
@@ -116,97 +112,7 @@ class Prf:
     def __repr__(self):
         return "{} ==> {} ({})".format(self.sq, "; ".join(map(repr, self.branches)), self.label)
 
-"""
-This section defines an internal representation of rules.
-"""
-
-def cnrule(side, condition: Callable[[Tm], bool], label: str):
-    """This function is a decorator which compose over the internal rule representation."""
-    def decorator(func: Callable[[Sq, Tm], List[Sq]]):
-        @wraps(func)
-        def wrapper(*args, **kwargs) -> Optional[List[Prf]]: # pylint: disable=unsubscriptable-object
-            assert side in ["ant", "suc"]
-            sq = copy(args[0])
-            matchid = None
-            for id, x in enumerate(getattr(sq, side).inner):
-                if condition(x):
-                    matchid = id
-                    break
-            else:
-                return None
-            match = getattr(sq, side).inner.pop(matchid)
-            return Prf(args[0], func(sq, match), label)
-        return wrapper
-    return decorator
-
-def assert_arity(arity: int):
-    """Helper decorator to bail if any matched connective has the wrong arity.
-
-    This would mean that something is wrong in the code.
-    """
-    def decorator(func: Callable[[Sq, Tm], List[Sq]]):
-        @wraps(func)
-        def wrapper(*args, **kwargs):
-            print(args[1])
-            assert len(args[1].tms) == arity
-            return func(*args, **kwargs)
-        return wrapper
-    return decorator
-
-"""
-These internal rules are underlying rules. We might have some connectives that use the same decomposition rules as another.
-
-These functions take a sequent and connective, and return a list of sequents (the decomposed versions).
-"""
-
-@assert_arity(1)
-def u1(sq: Sq, x: Cn) -> List[Sq]:
-    sq.suc.inner.append(x.tms[0])
-    return [sq]
-
-@assert_arity(1)
-def u2(sq: Sq, x: Cn) -> List[Sq]:
-    sq.ant.inner.append(x.tms[0])
-    return [sq]
-
-@assert_arity(2)
-def b1(sq: Sq, x: Cn) -> List[Sq]:
-    sq.ant.inner.append(x.tms[0])
-    return [sq]
-
-@assert_arity(2)
-def b2(sq: Sq, x: Cn) -> List[Sq]:
-    sq.ant.inner.append(x.tms[1])
-    return [sq]
-    
-@assert_arity(2)
-def b3(sq: Sq, x: Cn) -> List[Sq]:
-    sq2 = copy(sq)
-    sq.suc.inner.append(x.tms[0])
-    sq2.suc.inner.append(x.tms[1])
-    return [sq, sq2]
-    
-@assert_arity(2)
-def b4(sq: Sq, x: Cn) -> List[Sq]:
-    sq.suc.inner.append(x.tms[0])
-    return [sq]
-    
-@assert_arity(2)
-def b5(sq: Sq, x: Cn) -> List[Sq]:
-    sq.suc.inner.append(x.tms[1])
-    return [sq]
-    
-@assert_arity(2)
-def b6(sq: Sq, x: Cn) -> List[Sq]:
-    sq2 = copy(sq)
-    sq.ant.inner.append(x.tms[0])
-    sq2.ant.inner.append(x.tms[1])
-    return [sq, sq2]
-
-# Here, rules are matching over their types. We could have done this by label or however else we wanted.
-matcher = lambda x, y: isinstance(y, x)
-
-TmIdx, CdIdx, SqIdx, PrfIdx = int, int, int, int
+TmIdx, CdIdx, SqIdx, PrfIdx = NewType("TmIdx", int), NewType("CdIdx", int), NewType("SqIdx", int), NewType("PrfIdx", int)
 
 def insert_val_idx(l, v):
     for i, x in enumerate(l):
@@ -219,10 +125,9 @@ class Context:
     def __init__(self, rules: List):
         self.terms: List[Tm] = []
         self.cedents: List[List[TmIdx]] = [[]]
-        self.sequents: List[(CdIdx, CdIdx)] = [(0,0)]
-        self.proofs: List[(SqIdx, List[SqIdx], str)] = []
-        # I have set the list of rules in the initializer, but we can convert this to an argument later.
-        self.rules = rules
+        self.sequents: List[Tuple[CdIdx, CdIdx]] = [(0,0)]
+        self.proofs: List[Tuple[SqIdx, List[SqIdx], str]] = []
+        self.rules: List[Callable[[Sq], Prf]] = rules
 
     def insert_tm_idx(self, term: Tm) -> TmIdx:
         return insert_val_idx(self.terms, term)
@@ -236,42 +141,42 @@ class Context:
     def insert_prf_idx(self, prf: Prf) -> PrfIdx:
         return insert_val_idx(self.proofs, (self.insert_sq_idx(prf.sq), list(map(self.insert_sq_idx, prf.branches)), prf.label))
 
-    def get_tm(self, tm: TmIdx):
+    def get_tm(self, tm: TmIdx) -> Tm:
         return self.terms[tm]
     
-    def get_cd(self, cd: CdIdx):
+    def get_cd(self, cd: CdIdx) -> Cd:
         return Cd(list(map(self.get_tm, self.cedents[cd])))
 
-    def get_sq(self, sq: SqIdx): # pylint: disable=unsubscriptable-object
+    def get_sq(self, sq: SqIdx) -> Sq:
         ant, cons = self.sequents[sq]
         return Sq(self.get_cd(ant), self.get_cd(cons))
 
-    def get_prf(self, prf: PrfIdx):
+    def get_prf(self, prf: PrfIdx) -> Prf:
         s, b, l = self.proofs[prf]
         return Prf(self.get_sq(s), list(map(self.get_sq, b)), l)
 
-    def repr_tms(self):
+    def repr_tms(self) -> str:
         return ", ".join(map(repr, self.terms))
 
-    def repr_inner_tms(self):
+    def repr_inner_tms(self) -> str:
         return ", ".join(map(repr, (idx for idx, _ in enumerate(self.terms))))
 
-    def repr_inner_cds(self):
+    def repr_inner_cds(self) -> str:
         return ", ".join(map(repr, self.cedents))
 
-    def repr_inner_sqs(self):
+    def repr_inner_sqs(self) -> str:
         return ", ".join("({}, {})".format(sq[0], sq[1]) for sq in self.sequents)
 
-    def repr_inner_prfs(self):
+    def repr_inner_prfs(self) -> str:
         return ". ".join("{} => [{}] ({})".format(prf[0], ", ".join(map(repr, prf[1])), prf[2]) for prf in self.proofs)
 
-    def calculate(self, sq: Sq):
+    def calculate(self, sq: Sq) -> List[Prf]:
         return [self.insert_prf_idx(prf) for prf in filter(None, (rule(sq) for rule in self.rules))]
 
     # Note: due to the behaviour of this loop, all new sequents will be added to the end of the list,
     # and will therefore be included in the very same loop, and I believe it is not possible that we
     # miss any sequents.
-    def calculate_all(self):
+    def calculate_all(self) -> None:
         for i, _ in enumerate(self.sequents):
             self.calculate(self.get_sq(i))
 

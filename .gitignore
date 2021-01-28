@@ -2,6 +2,7 @@ stanza_corenlp/
 stanza_resources/
 maltparser-*/
 LADR*/
+.vscode/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
@@ -143,3 +144,4 @@ dmypy.json
 cython_debug/
 
 .DS_STORE
+.DS_Store

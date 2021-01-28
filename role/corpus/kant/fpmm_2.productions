@@ -1,0 +1,315 @@
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+, -> ','
+. -> '.'
+. -> '.'
+. -> '.'
+: -> ';'
+ADJP -> ADVP JJ
+ADJP -> JJ
+ADJP -> JJ JJ
+ADJP -> RB JJ
+ADJP -> RB JJ
+ADJP -> RB JJ PP
+ADJP -> RBR JJ PP
+ADVP -> RB
+ADVP -> RB
+ADVP -> RB
+ADVP -> RB
+ADVP -> RB
+ADVP -> RB PP
+ADVP -> RB RB
+ADVP -> RB RBR
+CC -> 'and'
+CC -> 'and'
+CC -> 'and'
+CC -> 'and'
+CC -> 'and'
+CC -> 'and'
+CC -> 'but'
+CC -> 'but'
+CC -> 'but'
+CC -> 'but'
+CC -> 'yet'
+CONJP -> CC RB
+CONJP -> RB RB
+DT -> 'a'
+DT -> 'a'
+DT -> 'a'
+DT -> 'no'
+DT -> 'some'
+DT -> 'the'
+DT -> 'the'
+DT -> 'the'
+DT -> 'the'
+DT -> 'the'
+DT -> 'the'
+DT -> 'the'
+DT -> 'this'
+DT -> 'this'
+EX -> 'There'
+HYPH -> '-'
+IN -> 'For'
+IN -> 'although'
+IN -> 'as'
+IN -> 'by'
+IN -> 'for'
+IN -> 'from'
+IN -> 'in'
+IN -> 'in'
+IN -> 'in'
+IN -> 'of'
+IN -> 'of'
+IN -> 'of'
+IN -> 'of'
+IN -> 'of'
+IN -> 'than'
+IN -> 'to'
+IN -> 'without'
+IN -> 'without'
+IN -> 'without'
+JJ -> 'abominable'
+JJ -> 'bad'
+JJ -> 'calm'
+JJ -> 'dangerous'
+JJ -> 'good'
+JJ -> 'good'
+JJ -> 'good'
+JJ -> 'good'
+JJ -> 'good'
+JJ -> 'intrinsic'
+JJ -> 'intrinsic'
+JJ -> 'many'
+JJ -> 'unconditional'
+MD -> 'may'
+MD -> 'may'
+MD -> 'will'
+MD -> 'would'
+NN -> 'Moderation'
+NN -> 'action'
+NN -> 'control'
+NN -> 'coolness'
+NN -> 'deliberation'
+NN -> 'esteem'
+NN -> 'good'
+NN -> 'part'
+NN -> 'person'
+NN -> 'qualification'
+NN -> 'self'
+NN -> 'service'
+NN -> 'value'
+NN -> 'villain'
+NN -> 'will'
+NN -> 'will'
+NN -> 'worth'
+NNS -> 'affections'
+NNS -> 'ancients'
+NNS -> 'eyes'
+NNS -> 'passions'
+NNS -> 'principles'
+NNS -> 'qualities'
+NNS -> 'respects'
+NP -> DT
+NP -> DT ADJP NN
+NP -> DT JJ NN
+NP -> DT JJ NN
+NP -> DT JJ NN
+NP -> DT NN
+NP -> DT NN
+NP -> DT NN
+NP -> DT NN
+NP -> DT NN
+NP -> DT NNS
+NP -> DT NNS
+NP -> DT NNS
+NP -> DT NNS CC NNS
+NP -> EX
+NP -> JJ NN
+NP -> JJ NNS
+NP -> NN
+NP -> NN
+NP -> NN
+NP -> NN
+NP -> NN HYPH NN
+NP -> NP , NP , CC NP
+NP -> NP PP
+NP -> NP PP
+NP -> NP PP
+NP -> NP PP
+NP -> NP PP
+NP -> NP SBAR
+NP -> NP SBAR
+NP -> NP SBAR
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP
+NP -> PRP$ NN
+NP -> PRP$ NNS
+PP -> IN ADJP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN NP
+PP -> IN PP
+PP -> IN S
+PRP -> 'he'
+PRP -> 'him'
+PRP -> 'him'
+PRP -> 'it'
+PRP -> 'itself'
+PRP -> 'them'
+PRP -> 'them'
+PRP -> 'they'
+PRP -> 'they'
+PRP -> 'they'
+PRP -> 'us'
+PRP -> 'we'
+PRP$ -> 'its'
+PRP$ -> 'our'
+RB -> 'absolutely'
+RB -> 'also'
+RB -> 'always'
+RB -> 'directly'
+RB -> 'even'
+RB -> 'even'
+RB -> 'extremely'
+RB -> 'far'
+RB -> 'far'
+RB -> 'justly'
+RB -> 'not'
+RB -> 'not'
+RB -> 'not'
+RB -> 'only'
+RB -> 'only'
+RB -> 'so'
+RB -> 'unconditionally'
+RBR -> 'more'
+RBR -> 'more'
+S -> ADJP
+S -> NP ADJP
+S -> NP ADJP SBAR
+S -> NP ADVP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> NP VP
+S -> PP , S , CC S .
+S -> S , CC S .
+S -> S : CC S .
+S -> VP
+S -> VP
+S -> VP
+S -> VP
+S -> VP
+S -> VP
+SBAR -> IN S
+SBAR -> IN S
+SBAR -> S
+SBAR -> WHNP S
+SBAR -> WHNP S
+SBAR -> WHNP S
+TO -> 'to'
+TO -> 'to'
+TO -> 'to'
+VB -> 'be'
+VB -> 'become'
+VB -> 'constitute'
+VB -> 'facilitate'
+VB -> 'have'
+VB -> 'permit'
+VB -> 'presuppose'
+VB -> 'regard'
+VBG -> 'deserving'
+VBN -> 'been'
+VBN -> 'been'
+VBN -> 'called'
+VBN -> 'praised'
+VBP -> 'are'
+VBP -> 'are'
+VBP -> 'are'
+VBP -> 'are'
+VBP -> 'have'
+VBP -> 'have'
+VBP -> 'have'
+VBP -> 'seem'
+VBZ -> 'does'
+VBZ -> 'makes'
+VBZ -> 'makes'
+VBZ -> 'qualifies'
+VP -> ADVP VBZ S
+VP -> CONJP VP , CONJP VP
+VP -> MD VP
+VP -> MD VP
+VP -> MD VP
+VP -> MD VP
+VP -> NP
+VP -> SBAR
+VP -> TO VP
+VP -> TO VP
+VP -> TO VP
+VP -> VB ADJP
+VP -> VB NP
+VP -> VB NP
+VP -> VB NP
+VP -> VB NP PP
+VP -> VB S
+VP -> VB VP
+VP -> VB VP
+VP -> VBG S
+VP -> VBN ADVP VP
+VP -> VBN PP
+VP -> VBN PP
+VP -> VBN S PP , SBAR
+VP -> VBP ADVP
+VP -> VBP ADVP NP
+VP -> VBP NP
+VP -> VBP PP
+VP -> VBP PP PP
+VP -> VBP RB ADJP
+VP -> VBP S
+VP -> VBP VP
+VP -> VBZ NP
+VP -> VBZ RB VP
+VP -> VBZ S
+VP -> VP , CC ADVP VP
+VP -> VP , CC ADVP VP
+VP -> VP , CC VP
+VP -> VP CC VP
+VP -> VP CC VP
+WDT -> 'that'
+WDT -> 'which'
+WDT -> 'which'
+WHNP -> WDT
+WHNP -> WDT
+WHNP -> WDT

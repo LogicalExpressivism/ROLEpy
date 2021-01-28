@@ -1,4 +1,4 @@
-from role import rules
+from . import rules
 from .calculus import Context, Cd
 from itertools import chain
 from tabulate import tabulate

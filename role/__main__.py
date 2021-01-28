@@ -1,4 +1,3 @@
-from . import rules
 from .calculus import Context, Cd
 from itertools import chain
 from tabulate import tabulate
@@ -13,7 +12,8 @@ def context_dump(context):
     print("\nInner proofs:")
     print(tabulate((i, prf[0], prf[1], prf[2], context.get_prf(i)) for i, prf in enumerate(context.proofs)))
 
-def test_01():
+
+if __name__ == "__main__":
     from role.rules import A, X, Not, And, Or, Impl, LKSq, LKPrf, LJSq, LJPrf, Rules
 
     sequents = [
@@ -35,9 +35,3 @@ def test_01():
         ljcontext.insert_sq_idx(sq)
     ljcontext.calculate_all()
     context_dump(ljcontext)
-
-def test_02():
-    pass    
-
-if __name__ == "__main__":
-    test_01()

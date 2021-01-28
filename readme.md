@@ -1,3 +1,7 @@
 # ROLEPY
 
-Tools to define sequent calculi and graph sequent decomposition.
+Tools to work with focused proofs in sequent calculi.
+
+## Changelog
+
+- 28 January 2021: Lots of refactoring and reorganization.

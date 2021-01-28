@@ -2,21 +2,14 @@ from collections import namedtuple
 from copy import copy
 from functools import reduce, wraps, partial
 from itertools import chain
-from typing import Callable, List, NamedTuple, NoReturn, Optional, Union, Tuple, NewType
-
-# import networkx as nx
-# from networkx.drawing.nx_agraph import graphviz_layout as layout
-# import matplotlib.pyplot as plt
+from typing import Callable, List, NamedTuple, NoReturn, Optional, Union, Tuple, NewType, TypeVar, Generic, Type
 
 class Tm:
     """Abstract class for Terms."""
     def __repr__(self):
         raise NotImplementedError
 
-# Singular Terms.
-
 class St(Tm):
-    """Singular Terms."""
     label: str
 
     def __init__(self, idx: int):
@@ -26,8 +19,7 @@ class St(Tm):
         return "{}{}".format(self.label, self.idx)
 
     def __eq__(self, other):
-        if isinstance(other, St): return (self.label == other.label) and (self.idx == other.idx)
-        return False
+        return (self.label == other.label) and (self.idx == other.idx) if isinstance(other, type(self)) else False
 
 class Cn(Tm):
     """Connectives."""
@@ -60,7 +52,7 @@ class Qn(Tm):
 
 def define_singular_term(label) -> type:
     return type(label, (St,), {
-        "label": label,
+        "label": label
     })
 
 def define_connective(conn, arity) -> type:
@@ -79,32 +71,45 @@ def define_quantifier(sym: str, bindto: type) -> type:
 In this section we defined cedents, sequents, and proofs.
 """
 
-class Cd:
+class Cd(Tuple[Tm, ...]):
     """Cedents are internally a list of terms."""
-    def __init__(self, inner: List[Tm]):
-        self.inner = inner
+    # def __init__(self, inner: List[Tm]):
+    #     self.inner = inner
 
-    def __copy__(self):
-        return Cd(self.inner.copy())
+    # def __copy__(self):
+    #     return Cd(self.inner.copy())
 
     def __repr__(self):
-        return ", ".join(map(repr, self.inner))
+        return ", ".join(map(repr, self))
 
-class Sq:
-    """Sequents are internally two cedents."""
-    def __init__(self, ant: Cd, suc: Cd):
+class Sq(Tuple[Cd, Cd]):
+    kind: str
+    turnstile: str
+    ant_restriction: Callable = lambda _, x: True
+    suc_restriction: Callable = lambda _, x: True
+
+    def __init__(self, sq: Tuple[Cd, Cd]):
+        """Sequents are internally two cedents."""
+        ant, suc = sq
+        assert self.ant_restriction(ant) # pylint: disable=no-value-for-parameter
+        assert self.suc_restriction(suc) # pylint: disable=no-value-for-parameter
         self.ant = ant
         self.suc = suc
 
-    def __copy__(self):
-        return Sq(copy(self.ant), copy(self.suc))
+    # def __copy__(self):
+    #     return Sq(copy(self.ant), copy(self.suc))
 
     def __repr__(self):
-        return "{} |~ {}".format(self.ant, self.suc)
+        return "{} {} {}".format(self.ant, self.turnstile, self.suc)
 
 class Prf:
-    """Proofs are internally a sequent, a list of sequents, and a label."""
+    kind: str
+    sq_restriction: Callable[[Sq], bool] = lambda _, x: True
+
     def __init__(self, sq: Sq, branches: List[Sq], label: str):
+        """Proofs are internally a sequent, a list of sequents, and a label."""
+        assert self.sq_restriction(sq) # pylint: disable=no-value-for-parameter
+        assert all(self.sq_restriction(s) for s in branches) # pylint: disable=no-value-for-parameter
         self.sq = sq
         self.branches = branches
         self.label = label
@@ -112,17 +117,46 @@ class Prf:
     def __repr__(self):
         return "{} ==> {} ({})".format(self.sq, "; ".join(map(repr, self.branches)), self.label)
 
+def define_sequent(
+    kind: str,
+    turnstile: str = "|~",
+    ant_restriction = lambda _, x: True,
+    suc_restriction = lambda _, x: True
+    ) -> type:
+    return type(kind, (Sq,), {
+        "kind": kind,
+        "turnstile": turnstile,
+        "ant_restriction": ant_restriction,
+        "suc_restriction": suc_restriction,
+    })
+
+def define_proof(kind, sq_restriction) -> type:
+    return type(kind, (Prf,), {
+        "label": kind,
+        "sq_restriction": lambda _, x: True,
+    })
+
 TmIdx, CdIdx, SqIdx, PrfIdx = NewType("TmIdx", int), NewType("CdIdx", int), NewType("SqIdx", int), NewType("PrfIdx", int)
 
 def insert_val_idx(l, v):
     for i, x in enumerate(l):
+        if isinstance(v, List) and isinstance(x, List):
+            if sorted(x) == sorted(v):
+                return i
+        elif isinstance(v, Tuple) and isinstance(x, Tuple) and len(v) == 3 and len(x) == 3:
+            if v[0] == x[0] and sorted(v[1]) == sorted(x[1]):
+                return i
         if x == v:
             return i
     l.append(v)
     return len(l) - 1
 
-class Context:
-    def __init__(self, rules: List):
+SqType, PrfType = TypeVar("SqType"), TypeVar("PrfType")
+
+class Context(Generic[SqType, PrfType]):
+    def __init__(self, sqtype: Type[SqType], prftype: Type[PrfType], rules: List):
+        self.sqtype = sqtype
+        self.prftype = prftype
         self.terms: List[Tm] = []
         self.cedents: List[List[TmIdx]] = [[]]
         self.sequents: List[Tuple[CdIdx, CdIdx]] = [(0,0)]
@@ -132,28 +166,27 @@ class Context:
     def insert_tm_idx(self, term: Tm) -> TmIdx:
         return insert_val_idx(self.terms, term)
 
-    def insert_cd_idx(self, ced: Cd) -> CdIdx:
-        return insert_val_idx(self.cedents, [self.insert_tm_idx(term) for term in ced.inner])
+    def insert_cd_idx(self, cd: Cd) -> CdIdx:
+        return insert_val_idx(self.cedents, [self.insert_tm_idx(term) for term in cd])
 
-    def insert_sq_idx(self, sq: Sq) -> SqIdx:
+    def insert_sq_idx(self, sq: SqType) -> SqIdx:
         return insert_val_idx(self.sequents, (self.insert_cd_idx(sq.ant), self.insert_cd_idx(sq.suc)))
 
-    def insert_prf_idx(self, prf: Prf) -> PrfIdx:
+    def insert_prf_idx(self, prf: PrfType) -> PrfIdx:
         return insert_val_idx(self.proofs, (self.insert_sq_idx(prf.sq), list(map(self.insert_sq_idx, prf.branches)), prf.label))
 
     def get_tm(self, tm: TmIdx) -> Tm:
         return self.terms[tm]
     
     def get_cd(self, cd: CdIdx) -> Cd:
-        return Cd(list(map(self.get_tm, self.cedents[cd])))
+        return Cd(map(self.get_tm, self.cedents[cd]))
 
-    def get_sq(self, sq: SqIdx) -> Sq:
-        ant, cons = self.sequents[sq]
-        return Sq(self.get_cd(ant), self.get_cd(cons))
+    def get_sq(self, sq: SqIdx) -> SqType:
+        return self.sqtype(tuple(map(self.get_cd, self.sequents[sq])))
 
-    def get_prf(self, prf: PrfIdx) -> Prf:
+    def get_prf(self, prf: PrfIdx) -> PrfType:
         s, b, l = self.proofs[prf]
-        return Prf(self.get_sq(s), list(map(self.get_sq, b)), l)
+        return self.prftype(self.get_sq(s), tuple(map(self.get_sq, b)), l)
 
     def repr_tms(self) -> str:
         return ", ".join(map(repr, self.terms))
@@ -170,64 +203,25 @@ class Context:
     def repr_inner_prfs(self) -> str:
         return ". ".join("{} => [{}] ({})".format(prf[0], ", ".join(map(repr, prf[1])), prf[2]) for prf in self.proofs)
 
-    def calculate(self, sq: Sq) -> List[Prf]:
-        return [self.insert_prf_idx(prf) for prf in filter(None, (rule(sq) for rule in self.rules))]
+    def try_into_sequent(self, sq: Tuple[Cd, Cd]) -> Optional[SqType]: # pylint: disable=unsubscriptable-object
+        try:
+            return self.sqtype(sq)
+        except AssertionError:
+            return None
 
-    # Note: due to the behaviour of this loop, all new sequents will be added to the end of the list,
-    # and will therefore be included in the very same loop, and I believe it is not possible that we
-    # miss any sequents.
+    def try_into_proof(self, rule_result: Tuple[Tuple[Cd, Cd], Tuple[Tuple[Cd, Cd], ...], str]) -> Optional[PrfType]: # pylint: disable=unsubscriptable-object
+        try:
+            sq = self.try_into_sequent(rule_result[0])
+            branches = tuple(map(self.try_into_sequent, rule_result[1]))
+            assert sq is not None
+            assert all(branch is not None for branch in branches)
+            return self.prftype(sq, branches, rule_result[2])
+        except AssertionError:
+            return None
+
+    def calculate(self, sq: Sq) -> List[PrfIdx]:
+        return [self.insert_prf_idx(prf) for prf in filter(None, map(self.try_into_proof, filter(None, (rule(sq) for rule in self.rules))))]
+
     def calculate_all(self) -> None:
-        for i, _ in enumerate(self.sequents):
-            self.calculate(self.get_sq(i))
-
-    # def graph_prfs(self):
-    #     g = nx.MultiDiGraph()
-    #     g.add_edges_from((source, target) for (source, targets, _) in self.proofs for target in targets)
-    #     g = nx.subgraph(g, nx.ancestors(g, 0))
-    #     # @TODO: In progress attempt at fixing nodes that aren't sources or aren't targets of any edge at
-    #     # different sides of the plot.
-    #     # no_ancestors = []
-    #     # no_descendants = []
-    #     # others = []
-
-    #     # napos = (1,-1)
-    #     # naposdelta = 2. / len(no_ancestors)
-    #     # ndpos = (-1,-1)
-    #     # ndposdelta = 2. / len(no_descendants)
-    #     # for node in g.nodes():
-    #     #     if len(nx.ancestors(g, node)) == 0:
-    #     #         no_ancestors[node] = napos
-    #     #         napos = (napos[0], napos[1] + naposdelta)
-    #     #         continue
-    #     #     if len(nx.descendants(g, node)) == 0:
-    #     #         no_descendants[node] = ndpos
-    #     #         ndpos = (ndpos[0], ndpos[1] + ndposdelta)
-    #     #         continue
-    #     #     others[node] = (0,0)
-    #     pos = nx.spring_layout(g,
-    #         k=1,
-    #         scale=4,
-    #         # pos=[(n, p) for (n, p) in dicts.items() for dicts in [no_ancestors, no_descendants, others]],
-    #         # fixed=[n for n in dicts.keys() for dicts in [no_ancestors, no_descendants]]
-    #         )
-        
-    #     plt.figure(figsize=(10,10))
-    #     options = {
-    #         "with_labels": True,
-    #         "edgecolors": "black",
-    #         "edge_color": "black",
-    #         "width": 1,
-    #         "linewidths": 1,
-    #         "node_size": 100,
-    #         "node_color": "pink",
-    #         "alpha": 0.9,
-    #     }
-    #     nx.draw(g, pos=pos, **options,
-    #         labels={s:self.get_sq(s) for s in g.nodes()}
-    #         )
-    #     # nx.draw_networkx_edge_labels(g,pos,
-    #     #     edge_labels={(source, target):rule for (source, targets, rule) in self.proofs for target in targets},
-    #     #     font_color='red')
-    #     plt.axis('off')
-    #     plt.show()
-            
+        for ant, suc in self.sequents:
+            self.calculate((self.get_cd(ant), self.get_cd(suc)))
